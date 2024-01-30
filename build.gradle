@@ -92,8 +92,25 @@ publishing {
         }
     }
     publications {
-        gpr(MavenPublication) {
-            from(components.java)
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'Acess Options'
+                description = 'Acess Options'
+                url = 'https://github.com/Brancieq-Paul/accessoptions'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'paul'
+                        name = 'Paul Brancieq'
+                        email = 'mods@paulbrancieq.fr'
+                    }
+                }
+            }
         }
     }
 }
