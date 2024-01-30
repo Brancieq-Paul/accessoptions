@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "accessoptions",
+  "version": "${version}",
+  "name": "AccessOptions",
+  "description": "Provide an api that give access to options of some mods.",
+  "authors": [
+    "Paul Brancieq"
+  ],
+  "contact": {
+    "website": "https://github.com/Brancieq-Paul/optionsaccess",
+    "repo": "https://github.com/Brancieq-Paul/optionsaccess"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/accessoptions/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "fr.paulbrancieq.accessoptions.AccessOptions"
+    ]
+  },
+  "mixins": [
+    "accessoptions.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}"
+  }
+}
