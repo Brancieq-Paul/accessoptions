@@ -21,7 +21,7 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
       - name: Set version to SNAPSHOT
-        run: echo "version=$(./gradlew properties -q | grep "version:" | awk '{print $2}')-SNAPSHOT" >> $GITHUB_ENV
+        run: echo "version=$(./gradlew properties -q | grep 'version:' | awk '{print $2}')-SNAPSHOT" >> $GITHUB_ENV
       - name: Publish package
         uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
         with:
