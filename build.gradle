@@ -105,16 +105,15 @@ def createVersionString() {
 
     if (isRelease) {
         builder.append(project.version)
-        builder.append('+mc').append(project.minecraft_version)
     } else {
         builder.append(project.version)
-        builder.append('+mc').append(project.minecraft_version)
         builder.append('-SNAPSHOT')
         builder.append(buildId)
     }
+    builder.append('+mc').append(project.minecraft_version)
     if (!isRelease) {
         if (buildId != null) {
-            //builder.append("-build.").append(buildId)
+            builder.append("-build.").append(buildId)
         } else {
             project.setProperty('private', 'true')
             builder.append("-private")
