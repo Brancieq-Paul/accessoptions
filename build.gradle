@@ -74,10 +74,17 @@ publishing {
         maven {
             def releasesRepoName = 'paulReposiliteRepositoryReleases'
             def snapshotsRepoName = 'paulReposiliteRepositorySnapshots'
+            def privateRepoName = 'paulReposiliteRepositoryPrivate'
             def releasesRepoUrl = 'https://maven.paulbrancieq.fr/releases'
             def snapshotsRepoUrl = 'https://maven.paulbrancieq.fr/snapshots'
-            name = version.endsWith('SNAPSHOT') ? snapshotsRepoName : releasesRepoName
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            def privateRepoUrl = 'https://maven.paulbrancieq.fr/private'
+            if (project.hasProperty('private')) {
+                name = privateRepoName
+                url = privateRepoUrl
+            } else {
+                name = project.hasProperty("release") ? releasesRepoName : snapshotsRepoName
+                url = project.hasProperty("release") ? releasesRepoUrl : snapshotsRepoUrl
+            }
             credentials {
                 username = System.getenv('MAVEN_USERNAME')
                 password = System.getenv('MAVEN_PASSWORD')
@@ -89,4 +96,28 @@ publishing {
             from(components.java)
         }
     }
+}
+
+def createVersionString() {
+    def builder = StringBuilder()
+    def isRelease = project.hasProperty('release')
+    def buildId = System.getenv('GITHUB_RUN_NUMBER')
+
+    if (isRelease) {
+        builder.append(project.version)
+    } else {
+        builder.append(project.version)
+        builder.append('-SNAPSHOT')
+        builder.append(buildId)
+    }
+    builder.append('+mc').append(project.minecraft_version)
+    if (!isRelease) {
+        if (buildId != null) {
+            builder.append("-build.").append(buildId)
+        } else {
+            project.setProperty('private', 'true')
+            builder.append("-private")
+        }
+    }
+    return builder.toString()
 }
