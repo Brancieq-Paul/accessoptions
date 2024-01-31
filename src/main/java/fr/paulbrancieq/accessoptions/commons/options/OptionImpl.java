@@ -69,7 +69,7 @@ public class OptionImpl<S, T> implements Option<T> {
   public void setValue(Object newValue) throws ValueModificationException.OptionTypeMismatch {
     if (newValue instanceof String && !value.getClass().isAssignableFrom(String.class)) {
       try {
-        newValue = this.valueFromString.apply((String) newValue);
+        newValue = getValueFromString((String) newValue);
       }
       catch (Exception e) {
         throw new ValueModificationException.OptionTypeMismatch(this.storage.getModId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
@@ -83,8 +83,7 @@ public class OptionImpl<S, T> implements Option<T> {
     }
   }
 
-  @Override
-  public T getValueFromString(String newValue) throws ValueModificationException.OptionTypeMismatch {
+  protected T getValueFromString(String newValue) {
     return valueFromString.apply(newValue);
   }
 

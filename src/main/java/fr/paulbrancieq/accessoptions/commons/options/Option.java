@@ -13,8 +13,6 @@ public interface Option<T> {
 
   void setValue(Object value) throws ValueModificationException.OptionTypeMismatch;
 
-  T getValueFromString(String value) throws ValueModificationException.OptionTypeMismatch;
-
   void reset();
 
   OptionsStorage<?> getStorage();
