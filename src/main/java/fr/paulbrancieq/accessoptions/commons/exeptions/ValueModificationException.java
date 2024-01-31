@@ -14,7 +14,7 @@ public class ValueModificationException extends Exception {
 
   public static class OptionNotModified extends ValueModificationException {
     public OptionNotModified(String modId, String optionId) {
-      super("Applied value is the same as the actual value for mod id: " + modId + " and option id: " + optionId);
+      super("Option is already set to the applied value for mod id: " + modId + " and option id: " + optionId);
     }
   }
 }
