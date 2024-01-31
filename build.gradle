@@ -99,25 +99,25 @@ publishing {
 }
 
 def createVersionString() {
-    def builder = StringBuilder()
+    def versionString = ""
     def isRelease = project.hasProperty('release')
     def buildId = System.getenv('GITHUB_RUN_NUMBER')
 
     if (isRelease) {
-        builder.append(project.mod_version)
+        versionString = versionString + project.mod_version
     } else {
-        builder.append(project.mod_version)
-        builder.append('-SNAPSHOT')
-        builder.append(buildId)
+        versionString = versionString + project.mod_version
+        versionString = versionString + '-SNAPSHOT'
+        versionString = versionString + buildId
     }
-    builder.append('+mc').append(project.minecraft_version)
+    versionString = versionString + '+mc' + project.minecraft_version
     if (!isRelease) {
         if (buildId != null) {
-            builder.append("-build.").append(buildId)
+            versionString = versionString + "-build." + buildId
         } else {
             project.setProperty('private', 'true')
-            builder.append("-private")
+            versionString = versionString + "-private"
         }
     }
-    return builder.toString()
+    return versionString
 }
