@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-version = project.mod_version
+version = createVersionString()
 group = project.maven_group
 
 base {
@@ -104,9 +104,9 @@ def createVersionString() {
     def buildId = System.getenv('GITHUB_RUN_NUMBER')
 
     if (isRelease) {
-        builder.append(project.version)
+        builder.append(project.mod_version)
     } else {
-        builder.append(project.version)
+        builder.append(project.mod_version)
         builder.append('-SNAPSHOT')
         builder.append(buildId)
     }
