@@ -83,7 +83,7 @@ publishing {
             def releasesRepoUrl = 'https://maven.paulbrancieq.fr/releases'
             def snapshotsRepoUrl = 'https://maven.paulbrancieq.fr/snapshots'
             def privateRepoUrl = 'https://maven.paulbrancieq.fr/private'
-            if (project.hasProperty('private')) {
+            if (project.version.endsWith('-private') {
                 name = privateRepoName
                 url = privateRepoUrl
             } else {
@@ -108,14 +108,12 @@ def createVersionString() {
     } else {
         versionString = versionString + project.mod_version
         versionString = versionString + '-SNAPSHOT'
-        versionString = versionString + buildId
     }
     versionString = versionString + '+mc' + project.minecraft_version
     if (!isRelease) {
         if (buildId != null) {
             versionString = versionString + "-build." + buildId
         } else {
-            project.setProperty('private', 'true')
             versionString = versionString + "-private"
         }
     }
