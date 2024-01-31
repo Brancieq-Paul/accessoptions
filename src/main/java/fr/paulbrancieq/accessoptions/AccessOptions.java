@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class AccessOptions implements ModInitializer {
-  public static final String MOD_ID = "confeats";
-  public static final String MOD_NAME = "Confeats";
+  public static final String MOD_ID = "accessoptions";
+  public static final String MOD_NAME = "Access Options";
   private static AccessOptions INSTANCE;
   private final Map<String, OptionsStorage<?>> modOptionsStoragesMap = new HashMap<>();
   private static Logger LOGGER;
