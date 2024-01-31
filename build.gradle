@@ -70,6 +70,11 @@ jar {
 
 // configure the maven publication
 publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
     repositories {
         maven {
             def releasesRepoName = 'paulReposiliteRepositoryReleases'
@@ -88,28 +93,6 @@ publishing {
             credentials {
                 username = System.getenv('MAVEN_USERNAME')
                 password = System.getenv('MAVEN_PASSWORD')
-            }
-        }
-    }
-    publications {
-        mavenJava(MavenPublication) {
-            pom {
-                name = 'Acess Options'
-                description = 'Acess Options'
-                url = 'https://github.com/Brancieq-Paul/accessoptions'
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'paul'
-                        name = 'Paul Brancieq'
-                        email = 'mods@paulbrancieq.fr'
-                    }
-                }
             }
         }
     }
