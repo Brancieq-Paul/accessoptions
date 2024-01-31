@@ -21,6 +21,8 @@ public class OptionImpl<S, T> implements Option<T> {
   // private final EnumSet<OptionFlag> flags;
 
   private final Text name;
+
+  private final String optionId;
   private final Text tooltip;
   private T value;
   private T modifiedValue;
@@ -28,6 +30,7 @@ public class OptionImpl<S, T> implements Option<T> {
   private final boolean enabled;
 
   private OptionImpl(OptionsStorage<S> storage,
+                     String optionId,
                      Text name,
                      Text tooltip,
                      OptionBinding<S, T> binding,
@@ -37,6 +40,7 @@ public class OptionImpl<S, T> implements Option<T> {
     // EnumSet<OptionFlag> flags
     this.storage = storage;
     this.name = name;
+    this.optionId = optionId;
     this.tooltip = tooltip;
     this.binding = binding;
     this.valueFromString = valueFromString;
@@ -61,7 +65,7 @@ public class OptionImpl<S, T> implements Option<T> {
   }
 
   @Override
-  @SuppressWarnings({"unchecked", "rawtypes", "ConstantConditions"})
+  @SuppressWarnings({"unchecked", "ConstantConditions"})
   public void setValue(Object newValue) throws ValueModificationException.OptionTypeMismatch {
     if (newValue instanceof String && !value.getClass().isAssignableFrom(String.class)) {
       try {
@@ -108,7 +112,7 @@ public class OptionImpl<S, T> implements Option<T> {
   @Override
   public void applyChanges() throws ValueModificationException.OptionNotModified {
     if (!this.hasChanged()) {
-      throw new ValueModificationException.OptionNotModified(this.storage.getModId(), this.name.getString());
+      throw new ValueModificationException.OptionNotModified(this.storage.getModId(), this.optionId);
     }
     this.binding.setValue(this.storage.getData(), this.modifiedValue);
     this.value = this.modifiedValue;
@@ -120,12 +124,13 @@ public class OptionImpl<S, T> implements Option<T> {
   //   return this.flags;
   // }
 
-  public static <S, T> Builder<S, T> createBuilder(@SuppressWarnings("unused") Class<T> type, OptionsStorage<S> storage) {
-    return new Builder<>(storage);
+  public static <S, T> Builder<S, T> createBuilder(@SuppressWarnings("unused") Class<T> type, OptionsStorage<S> storage, String optionId) {
+    return new Builder<>(storage, optionId);
   }
 
   public static class Builder<S, T> {
     private final OptionsStorage<S> storage;
+    private final String optionId;
     private Text name;
     private Text tooltip;
     private OptionBinding<S, T> binding;
@@ -135,8 +140,9 @@ public class OptionImpl<S, T> implements Option<T> {
     // private final EnumSet<OptionFlag> flags = EnumSet.noneOf(OptionFlag.class);
     private boolean enabled = true;
 
-    private Builder(OptionsStorage<S> storage) {
+    private Builder(OptionsStorage<S> storage, String optionId) {
       this.storage = storage;
+      this.optionId = optionId;
     }
 
     public Builder<S, T> setName(Text name) {
@@ -199,7 +205,7 @@ public class OptionImpl<S, T> implements Option<T> {
       Validate.notNull(this.tooltip, "Tooltip must be specified");
       Validate.notNull(this.binding, "Option binding must be specified");
 
-      return new OptionImpl<>(this.storage, this.name, this.tooltip, this.binding, this.valueFromString, this.enabled);
+      return new OptionImpl<>(this.storage, this.optionId, this.name, this.tooltip, this.binding, this.valueFromString, this.enabled);
     }
   }
 }

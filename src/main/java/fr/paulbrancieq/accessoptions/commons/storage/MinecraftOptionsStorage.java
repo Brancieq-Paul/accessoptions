@@ -14,7 +14,7 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
   public MinecraftOptionsStorage() {
     super("minecraft");
     this.client = MinecraftClient.getInstance();
-    this.registerOption("autoJump", OptionImpl.createBuilder(Boolean.class, this)
+    this.registerOption("autoJump", OptionImpl.createBuilder(Boolean.class, this, "autoJump")
         .setName(Text.of("Auto Jump"))
         .setTooltip(Text.of("Automatically jump when running into a block"))
         .setBinding((options, value) -> options.getAutoJump().setValue(value), options -> options.getAutoJump().getValue())
