@@ -1,8 +1,11 @@
 package fr.paulbrancieq.accessoptions.commons.options;
 
-import fr.paulbrancieq.accessoptions.commons.exeptions.ValueModificationException;
+import fr.paulbrancieq.accessoptions.commons.exeptions.AccessOptionsException;
+import fr.paulbrancieq.accessoptions.commons.reloader.Reloader;
 import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 import net.minecraft.text.Text;
+
+import java.util.Collection;
 
 public interface Option<T> {
   Text getName();
@@ -11,7 +14,7 @@ public interface Option<T> {
 
   T getValue();
 
-  void setValue(Object value) throws ValueModificationException.OptionTypeMismatch;
+  void setValue(Object value) throws AccessOptionsException.OptionTypeMismatch;
 
   void reset();
 
@@ -21,8 +24,7 @@ public interface Option<T> {
 
   boolean hasChanged();
 
-  void applyChanges() throws ValueModificationException.OptionNotModified;
+  void applyChanges() throws AccessOptionsException.OptionNotModified;
 
-  // TODO
-  // Collection<OptionFlag> getFlags();
+  Collection<Reloader> getReloaders();
 }

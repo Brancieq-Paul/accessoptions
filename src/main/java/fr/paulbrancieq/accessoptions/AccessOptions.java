@@ -13,29 +13,16 @@ public class AccessOptions implements ModInitializer {
   public static final String MOD_ID = "accessoptions";
   public static final String MOD_NAME = "Access Options";
   private static AccessOptions INSTANCE;
-  private final Map<String, OptionsStorage<?>> modOptionsStoragesMap = new HashMap<>();
   private static Logger LOGGER;
 
   @Override
   public void onInitialize() {
     INSTANCE = this;
-    registerModOptionsStorage(new MinecraftOptionsStorage());
+    OptionsAccessHandler.registerModOptionsStorage(new MinecraftOptionsStorage());
   }
 
   public static AccessOptions getInstance() {
     return INSTANCE;
-  }
-
-  public void registerModOptionsStorage(OptionsStorage<?> optionStorage) {
-    modOptionsStoragesMap.put(optionStorage.getModId(), optionStorage);
-  }
-
-  public OptionsStorage<?> getOptionsStorage(String id) {
-    return modOptionsStoragesMap.get(id);
-  }
-
-  public Map<String, OptionsStorage<?>> getOptionsStorages() {
-    return modOptionsStoragesMap;
   }
 
   public static Logger getLogger() {
