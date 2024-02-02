@@ -12,6 +12,7 @@ public class OptionsAccessHandler {
   private static final List<Option<?>> modifiedOptions = new ArrayList<>();
   private static final List<OptionsStorage<?>> modifiedStorages = new ArrayList<>();
   private static final List<Reloader> reloadersToRun = new ArrayList<>();
+  private static Boolean restartNeeded = false;
 
   public static void instantModifyAndApplyOption(String modId, String optionId, Object value) throws
       AccessOptionsException.OptionNotFound,
@@ -80,6 +81,8 @@ public class OptionsAccessHandler {
   public static void instantApplyModifiedOption(Option<?> option) throws AccessOptionsException.OptionNotModified {
     applyModifiedOption(option);
     option.getStorage().save();
+    runReloaders();
+    askRestartIfNeeded();
   }
 
   public static void applyAllModifiedOptions() {
@@ -94,6 +97,18 @@ public class OptionsAccessHandler {
     runReloaders();
     modifiedOptions.clear();
     modifiedStorages.clear();
+    askRestartIfNeeded();
+  }
+
+  public static void setRestartNeeded(Boolean restartNeeded) {
+    OptionsAccessHandler.restartNeeded = restartNeeded;
+  }
+
+  private static void askRestartIfNeeded() {
+    if (restartNeeded) {
+      // TODO: ask for restart
+      AccessOptions.getLogger().info("Restart needed");
+    }
   }
 
   public static void runReloaders() {
