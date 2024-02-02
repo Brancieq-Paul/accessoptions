@@ -1,13 +1,9 @@
 package fr.paulbrancieq.accessoptions;
 
 import fr.paulbrancieq.accessoptions.commons.storage.MinecraftOptionsStorage;
-import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-import java.util.HashMap;
 
 public class AccessOptions implements ModInitializer {
   public static final String MOD_ID = "accessoptions";

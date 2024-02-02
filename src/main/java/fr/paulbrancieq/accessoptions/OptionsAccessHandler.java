@@ -6,7 +6,6 @@ import fr.paulbrancieq.accessoptions.commons.reloader.Reloader;
 import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class OptionsAccessHandler {
   private static final Map<String, OptionsStorage<?>> modOptionsStoragesMap = new HashMap<>();
