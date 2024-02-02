@@ -60,6 +60,7 @@ public class OptionsAccessHandler {
 
   public static void applyModifiedOption(Option<?> option) throws AccessOptionsException.OptionNotModified {
     option.applyChanges();
+    option.reset();
     addReloadersToRun(option.getReloaders());
     if (!modifiedStorages.contains(option.getStorage())) {
       modifiedStorages.add(option.getStorage());
@@ -78,7 +79,7 @@ public class OptionsAccessHandler {
   }
 
   public static void instantApplyModifiedOption(Option<?> option) throws AccessOptionsException.OptionNotModified {
-    option.applyChanges();
+    applyModifiedOption(option);
     option.getStorage().save();
   }
 
