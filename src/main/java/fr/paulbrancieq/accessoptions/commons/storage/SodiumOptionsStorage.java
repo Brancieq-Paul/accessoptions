@@ -10,21 +10,30 @@ import me.jellysquid.mods.sodium.client.gui.SodiumGameOptions;
 import net.minecraft.text.Text;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 public class SodiumOptionsStorage extends OptionsStorageImpl<SodiumGameOptions> {
+
+  // graphics quality string consumer
+  private static final Function<String, SodiumGameOptions.GraphicsQuality> graphicsQualityStringConsumer = (value) -> switch (value) {
+    case "fancy" -> SodiumGameOptions.GraphicsQuality.FANCY;
+    case "fast" -> SodiumGameOptions.GraphicsQuality.FAST;
+    case "default" -> SodiumGameOptions.GraphicsQuality.DEFAULT;
+    default -> throw new IllegalArgumentException("Invalid graphics quality value: " + value);
+  };
     public SodiumOptionsStorage(OptionsAccessHandler optionsAccessHandler) {
       super("sodium");
       this.registerOption("weather", OptionImpl.createBuilder(SodiumGameOptions.GraphicsQuality.class, this, "weather")
           .setName(Text.translatable("soundCategory.weather"))
           .setTooltip(Text.translatable("sodium.options.weather_quality.tooltip"))
           .setBinding((options, value) -> options.quality.weatherQuality = value, options -> options.quality.weatherQuality)
-          .setValueFromString(SodiumGameOptions.GraphicsQuality::valueOf)
+          .setValueFromString(graphicsQualityStringConsumer)
           .build());
       this.registerOption("leaves_quality", OptionImpl.createBuilder(SodiumGameOptions.GraphicsQuality.class, this, "leaves_quality")
           .setName(Text.translatable("sodium.options.leaves_quality.name"))
           .setTooltip(Text.translatable("sodium.options.leaves_quality.tooltip"))
           .setBinding((options, value) -> options.quality.leavesQuality = value, options -> options.quality.leavesQuality)
-          .setValueFromString(SodiumGameOptions.GraphicsQuality::valueOf)
+          .setValueFromString(graphicsQualityStringConsumer)
           .setReloaders(new RequiresRendererReload(optionsAccessHandler))
           .build());
       this.registerOption("vignette", OptionImpl.createBuilder(Boolean.class, this, "vignette")
