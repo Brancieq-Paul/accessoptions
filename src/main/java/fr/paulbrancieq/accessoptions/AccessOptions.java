@@ -1,6 +1,7 @@
 package fr.paulbrancieq.accessoptions;
 
 import fr.paulbrancieq.accessoptions.commons.storage.MinecraftOptionsStorage;
+import fr.paulbrancieq.accessoptions.commons.storage.SodiumOptionsStorage;
 import fr.paulbrancieq.accessoptions.commons.storage.StorageSupplierImpl;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
@@ -19,6 +20,12 @@ public class AccessOptions implements ModInitializer {
         new StorageSupplierImpl(
             MinecraftOptionsStorage::new,
             "minecraft"
+        )
+    );
+    OptionsAccessHandler.registerModOptionsStorageSupplier(
+        new StorageSupplierImpl(
+            SodiumOptionsStorage::new,
+            "sodium"
         )
     );
   }

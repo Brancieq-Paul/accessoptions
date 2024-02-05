@@ -30,7 +30,7 @@ public class OptionsAccessHandler {
       storageSupplier.supply(optionsStorage -> {
         modOptionsStoragesMap.put(optionsStorage.getStorageId(), optionsStorage);
         AccessOptions.getLogger().info("Storage \"" + optionsStorage.getStorageId() + "\" registered.");
-      });
+      }, this);
     }
   }
 

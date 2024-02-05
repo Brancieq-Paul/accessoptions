@@ -1,6 +1,7 @@
 package fr.paulbrancieq.accessoptions.commons.storage;
 
 import fr.paulbrancieq.accessoptions.AccessOptions;
+import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -11,7 +12,7 @@ import net.minecraft.text.Text;
 public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
   private final MinecraftClient client;
 
-  public MinecraftOptionsStorage() {
+  public MinecraftOptionsStorage(OptionsAccessHandler optionsAccessHandler) {
     super("minecraft");
     this.client = MinecraftClient.getInstance();
     this.registerOption("autoJump", OptionImpl.createBuilder(Boolean.class, this, "autoJump")
