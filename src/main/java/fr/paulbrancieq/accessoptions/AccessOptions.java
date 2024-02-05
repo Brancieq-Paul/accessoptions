@@ -1,6 +1,7 @@
 package fr.paulbrancieq.accessoptions;
 
 import fr.paulbrancieq.accessoptions.commons.storage.MinecraftOptionsStorage;
+import fr.paulbrancieq.accessoptions.commons.storage.StorageSupplierImpl;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,12 @@ public class AccessOptions implements ModInitializer {
   @Override
   public void onInitialize() {
     INSTANCE = this;
-    OptionsAccessHandler.registerModOptionsStorage(new MinecraftOptionsStorage());
+    OptionsAccessHandler.registerModOptionsStorageSupplier(
+        new StorageSupplierImpl(
+            MinecraftOptionsStorage::new,
+            "minecraft"
+        )
+    );
   }
 
   public static AccessOptions getInstance() {

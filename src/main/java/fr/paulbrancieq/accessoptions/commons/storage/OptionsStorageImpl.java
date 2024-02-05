@@ -8,15 +8,15 @@ import java.util.Map;
 public abstract class OptionsStorageImpl<T> implements OptionsStorage<T> {
   private final Map<String, Option<?>> options = new HashMap<>();
 
-  private final String modId;
+  private final String storageId;
 
-  public OptionsStorageImpl(String modId) {
-    this.modId = modId;
+  public OptionsStorageImpl(String storageId) {
+    this.storageId = storageId;
   }
 
   @Override
-  public String getModId() {
-    return modId;
+  public String getStorageId() {
+    return storageId;
   }
 
   @Override

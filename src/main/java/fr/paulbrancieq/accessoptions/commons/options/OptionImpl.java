@@ -67,14 +67,14 @@ public class OptionImpl<S, T> implements Option<T> {
         newValue = getValueFromString((String) newValue);
       }
       catch (Exception e) {
-        throw new AccessOptionsException.OptionTypeMismatch(this.storage.getModId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
+        throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
       }
     }
     if (value.getClass().isInstance(newValue)) {
       this.modifiedValue = (T) newValue;
     }
     else {
-      throw new AccessOptionsException.OptionTypeMismatch(this.storage.getModId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
+      throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
     }
   }
 
@@ -106,7 +106,7 @@ public class OptionImpl<S, T> implements Option<T> {
   @Override
   public void applyChanges() throws AccessOptionsException.OptionNotModified {
     if (!this.hasChanged()) {
-      throw new AccessOptionsException.OptionNotModified(this.storage.getModId(), this.optionId);
+      throw new AccessOptionsException.OptionNotModified(this.storage.getStorageId(), this.optionId);
     }
     this.binding.setValue(this.storage.getData(), this.modifiedValue);
     this.value = this.modifiedValue;

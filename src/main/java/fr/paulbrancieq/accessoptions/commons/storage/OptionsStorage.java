@@ -9,7 +9,7 @@ public interface OptionsStorage<T> {
   T getData();
   @Environment(EnvType.CLIENT)
   void save();
-  String getModId();
+  String getStorageId();
   void registerOption(String id, Option<?> option);
   Option<?> getOption(String id);
 }
