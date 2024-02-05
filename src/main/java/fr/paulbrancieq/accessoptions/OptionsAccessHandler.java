@@ -104,9 +104,8 @@ public class OptionsAccessHandler {
     if (confirmationAsker.prompts.isEmpty()) {
       applyAndSaveOptions(ignoreOptionNotModified);
     } else {
-      MinecraftClient.getInstance().execute(() -> {
-        MinecraftClient.getInstance().setScreen(confirmationAsker.prompts.get(0));
-      });
+      MinecraftClient.getInstance().execute(() ->
+          MinecraftClient.getInstance().setScreen(confirmationAsker.prompts.get(0)));
     }
   }
 
