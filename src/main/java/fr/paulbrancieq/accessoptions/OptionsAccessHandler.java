@@ -58,7 +58,7 @@ public class OptionsAccessHandler {
   public void instantModifyAndApplyOption(Option<?> option, Object value) throws
       AccessOptionsException.OptionTypeMismatch {
     modifyOption(option, value);
-    applyAllModifiedOptions();
+    askReloadersAndApplyModifiedOptions();
   }
 
   @Environment(EnvType.CLIENT)
