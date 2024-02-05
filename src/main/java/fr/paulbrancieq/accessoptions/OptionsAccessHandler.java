@@ -101,10 +101,13 @@ public class OptionsAccessHandler {
   public void applyOptions(Boolean ignoreOptionNotModified) throws
       AccessOptionsException.OptionNotModified {
     setPromptsReloaders();
-    confirmationAsker.prompts.stream().findFirst().ifPresent(prompt ->
-        MinecraftClient.getInstance().execute(() -> MinecraftClient.getInstance().setScreen(prompt))
-    );
-    applyAndSaveOptions(ignoreOptionNotModified);
+    if (confirmationAsker.prompts.isEmpty()) {
+      applyAndSaveOptions(ignoreOptionNotModified);
+    } else {
+      MinecraftClient.getInstance().execute(() -> {
+        MinecraftClient.getInstance().setScreen(confirmationAsker.prompts.get(0));
+      });
+    }
   }
 
   @Environment(EnvType.CLIENT)
