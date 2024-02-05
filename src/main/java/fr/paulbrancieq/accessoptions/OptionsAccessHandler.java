@@ -59,7 +59,7 @@ public class OptionsAccessHandler {
       AccessOptionsException.OptionTypeMismatch {
     modifyOption(option, value);
     try {
-      applyOptions(true);
+      applyOptions(false);
     } catch (AccessOptionsException.OptionNotModified e) {
       // Should not happen
       throw new RuntimeException(e);
@@ -167,9 +167,8 @@ public class OptionsAccessHandler {
         if (confirmationResult) {
           addOneReloaderToRun(reloader);
         }
-        reloader.getAssociatedModifiedOptions().forEach(option -> {
-          ((AskConfirmation) reloader).getPromptAnswerConsumer(option).accept(confirmationResult);
-        });
+        reloader.getAssociatedModifiedOptions().forEach(option ->
+            ((AskConfirmation) reloader).getPromptAnswerConsumer(option).accept(confirmationResult));
         runAfterAllConfirmations.run();
       }, ((AskConfirmation) reloader).getName(), ((AskConfirmation) reloader).getConfirmationText(), reloader);
       if (!prompts.isEmpty()) {
