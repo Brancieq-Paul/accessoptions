@@ -102,7 +102,7 @@ public class OptionsAccessHandler {
       AccessOptionsException.OptionNotModified {
     setPromptsReloaders();
     confirmationAsker.prompts.stream().findFirst().ifPresent(prompt ->
-        MinecraftClient.getInstance().setScreen(prompt)
+        MinecraftClient.getInstance().execute(() -> MinecraftClient.getInstance().setScreen(prompt))
     );
     applyAndSaveOptions(ignoreOptionNotModified);
   }
@@ -221,7 +221,7 @@ public class OptionsAccessHandler {
   @Environment(EnvType.CLIENT)
   private void restartIfNeeded() {
     if (restartNeeded) {
-      MinecraftClient.getInstance().stop();
+      MinecraftClient.getInstance().scheduleStop();
     }
   }
 
