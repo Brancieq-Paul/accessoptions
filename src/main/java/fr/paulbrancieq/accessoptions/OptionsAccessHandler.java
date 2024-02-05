@@ -58,7 +58,12 @@ public class OptionsAccessHandler {
   public void instantModifyAndApplyOption(Option<?> option, Object value) throws
       AccessOptionsException.OptionTypeMismatch {
     modifyOption(option, value);
-    askReloadersAndApplyModifiedOptions();
+    try {
+      applyOptions(true);
+    } catch (AccessOptionsException.OptionNotModified e) {
+      // Should not happen
+      throw new RuntimeException(e);
+    }
   }
 
   @Environment(EnvType.CLIENT)
@@ -93,12 +98,13 @@ public class OptionsAccessHandler {
     }
   }
 
-  public void askReloadersAndApplyModifiedOptions() {
+  public void applyOptions(Boolean ignoreOptionNotModified) throws
+      AccessOptionsException.OptionNotModified {
     setPromptsReloaders();
     confirmationAsker.prompts.stream().findFirst().ifPresent(prompt ->
         MinecraftClient.getInstance().setScreen(prompt)
     );
-    applyAllModifiedOptions();
+    applyAndSaveOptions(ignoreOptionNotModified);
   }
 
   @Environment(EnvType.CLIENT)
@@ -106,7 +112,7 @@ public class OptionsAccessHandler {
     reloadersFromModifiedOptions.clear();
     modifiedOptions.forEach(option -> addReloadersFromOption(option.getReloaders(), option));
     reloadersFromModifiedOptions.sort(new ReloaderComparator());
-    confirmationAsker = new ConfirmationAsker(this::applyAllModifiedOptions);
+    confirmationAsker = new ConfirmationAsker(this::applyAndSaveOptions);
     reloadersFromModifiedOptions.forEach(reloader -> {
       if (reloader instanceof AskConfirmation) {
         confirmationAsker.addPrompt(reloader);
@@ -178,12 +184,25 @@ public class OptionsAccessHandler {
     }
   }
 
+  private void applyAndSaveOptions() {
+    try {
+      applyAndSaveOptions(true);
+    } catch (AccessOptionsException.OptionNotModified e) {
+      // Should not happen
+      throw new RuntimeException(e);
+    }
+  }
+
   @Environment(EnvType.CLIENT)
-  private void applyAllModifiedOptions() {
+  private void applyAndSaveOptions(Boolean ignoreOptionNotModified) throws
+      AccessOptionsException.OptionNotModified {
     for (Option<?> option : modifiedOptions) {
       try {
         applyModifiedOption(option);
       } catch (AccessOptionsException.OptionNotModified e) {
+        if (!ignoreOptionNotModified) {
+          throw e;
+        }
         AccessOptions.getLogger().warn(e.getMessage());
       }
     }
