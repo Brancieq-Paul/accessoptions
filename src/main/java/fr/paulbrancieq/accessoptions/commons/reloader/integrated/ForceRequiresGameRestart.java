@@ -33,7 +33,7 @@ public class ForceRequiresGameRestart extends GenericReloader implements AskConf
 
   @Override
   public Text getConfirmationText() {
-    return Text.of("The changes you made require an immediate game restart to be applied. Do you want to restart" +
+    return Text.of("The changes you made require an immediate game restart to be applied. Do you want to restart " +
         "the game now? If you refuse, the changes will be lost.");
   }
 }

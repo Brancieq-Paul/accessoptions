@@ -31,7 +31,7 @@ public class RequiresGameRestart extends ForceRequiresGameRestart {
 
   @Override
   public Text getConfirmationText() {
-    return Text.of("The changes you made require game restart to be applied. Do you want to restart" +
+    return Text.of("The changes you made require game restart to be applied. Do you want to restart " +
         "the game now? If you refuse, the changes will not be effective until the game is restarted.");
   }
 }
