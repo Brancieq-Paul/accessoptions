@@ -114,7 +114,8 @@ public class OptionsAccessHandler {
   @Environment(EnvType.CLIENT)
   private void setPromptsReloaders() {
     reloadersFromModifiedOptions.clear();
-    modifiedOptions.forEach(option -> addReloadersFromOption(option.getReloaders(), option));
+    modifiedOptions.stream().filter((Option::hasChanged)).forEach(option ->
+        addReloadersFromModifiedOption(option.getReloaders(), option));
     reloadersFromModifiedOptions.sort(new ReloaderComparator());
     confirmationAsker = new ConfirmationAsker(this::applyAndSaveOptions);
     reloadersFromModifiedOptions.forEach(reloader -> {
@@ -127,12 +128,12 @@ public class OptionsAccessHandler {
   }
 
   @Environment(EnvType.CLIENT)
-  private void addReloadersFromOption(Collection<Reloader> newReloadersToRun, Option<?> option) {
-    newReloadersToRun.forEach(reloader -> addOneReloaderFromOption(reloader, option));
+  private void addReloadersFromModifiedOption(Collection<Reloader> newReloadersToRun, Option<?> option) {
+    newReloadersToRun.forEach(reloader -> addOneReloaderFromModifiedOption(reloader, option));
   }
 
   @Environment(EnvType.CLIENT)
-  private void addOneReloaderFromOption(Reloader newReloader, Option<?> option) {
+  private void addOneReloaderFromModifiedOption(Reloader newReloader, Option<?> option) {
     reloadersFromModifiedOptions.stream().filter(newReloader::isSameAs).findFirst().ifPresentOrElse(
         reloaderToRun -> reloaderToRun.addAssociatedModifiedOption(option),
         () -> {
