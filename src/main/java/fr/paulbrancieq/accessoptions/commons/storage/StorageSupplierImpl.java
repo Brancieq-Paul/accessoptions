@@ -19,6 +19,7 @@ public class StorageSupplierImpl implements StorageSupplier {
     if (FabricLoader.getInstance().isModLoaded(this.modId)) {
       AccessOptions.getLogger().info("Mod " + this.modId + " is loaded, supplying storage");
       storageConsumer.accept(this.storageSupplier.apply(optionsAccessHandler));
+      return;
     }
     AccessOptions.getLogger().info("Mod " + this.modId + " is not loaded, can't supply storage");
   }
