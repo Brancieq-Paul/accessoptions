@@ -3,6 +3,7 @@ package fr.paulbrancieq.accessoptions.commons.storage;
 import fr.paulbrancieq.accessoptions.AccessOptions;
 import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
+import fr.paulbrancieq.accessoptions.commons.reloader.integrated.RequiresGameRestart;
 import fr.paulbrancieq.accessoptions.commons.reloader.integrated.RequiresRendererReload;
 import fr.paulbrancieq.accessoptions.commons.reloader.integrated.RequiresRendererUpdate;
 import me.jellysquid.mods.sodium.client.SodiumClientMod;
@@ -76,7 +77,6 @@ public class SodiumOptionsStorage extends OptionsStorageImpl<SodiumGameOptions> 
         .setTooltip(Text.translatable("sodium.options.use_entity_culling.tooltip"))
         .setBinding((opts, value) -> opts.performance.useEntityCulling = value, opts -> opts.performance.useEntityCulling)
         .setValueFromString(Boolean::valueOf)
-        .setReloaders(new RequiresRendererUpdate(optionsAccessHandler))
         .build());
     this.registerOption("animate_only_visible_textures", OptionImpl.createBuilder(Boolean.class, this, "animate_only_visible_textures")
         .setName(Text.translatable("sodium.options.animate_only_visible_textures.name"))
@@ -90,7 +90,7 @@ public class SodiumOptionsStorage extends OptionsStorageImpl<SodiumGameOptions> 
         .setTooltip(Text.translatable("sodium.options.use_no_error_context.tooltip"))
         .setBinding((opts, value) -> opts.performance.useNoErrorGLContext = value, opts -> opts.performance.useNoErrorGLContext)
         .setValueFromString(Boolean::valueOf)
-        .setReloaders(new RequiresRendererReload(optionsAccessHandler))
+        .setReloaders(new RequiresGameRestart(optionsAccessHandler))
         .build());
     this.registerOption("use_persistent_mapping", OptionImpl.createBuilder(Boolean.class, this, "use_persistent_mapping")
         .setName(Text.translatable("sodium.options.use_persistent_mapping.name"))
@@ -104,7 +104,6 @@ public class SodiumOptionsStorage extends OptionsStorageImpl<SodiumGameOptions> 
         .setTooltip(Text.translatable("sodium.options.cpu_render_ahead_limit.tooltip"))
         .setBinding((opts, value) -> opts.advanced.cpuRenderAheadLimit = value, opts -> opts.advanced.cpuRenderAheadLimit)
         .setValueFromString(Integer::parseInt)
-        .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
   }
 
