@@ -122,8 +122,6 @@ public class OptionsAccessHandler {
       if (reloader instanceof AskConfirmation) {
         confirmationAsker.addPrompt(reloader);
       } else {
-        AccessOptions.getLogger().warn("333User accepted to restart the game, changes to " +
-            reloader.getAssociatedModifiedOptions().size() + " options will be effective after the game is restarted.");
         addOneReloaderToRun(reloader);
       }
     });
@@ -170,8 +168,6 @@ public class OptionsAccessHandler {
       }
       ReloaderConfirmationScreen prompt = new ReloaderConfirmationScreen((confirmationResult) -> {
         if (confirmationResult) {
-          AccessOptions.getLogger().warn("222User accepted to restart the game, changes to " +
-              reloader.getAssociatedModifiedOptions().size() + " options will be effective after the game is restarted.");
           addOneReloaderToRun(reloader);
         }
         reloader.getAssociatedModifiedOptions().forEach(option ->
@@ -182,8 +178,6 @@ public class OptionsAccessHandler {
       if (!prompts.isEmpty()) {
         prompts.get(prompts.size() - 1).setCallback((confirmationResult) -> {
           if (confirmationResult) {
-            AccessOptions.getLogger().warn("111User accepted to restart the game, changes to " +
-                reloader.getAssociatedModifiedOptions().size() + " options will be effective after the game is restarted.");
             addOneReloaderToRun(reloader);
           }
           reloader.getAssociatedModifiedOptions().forEach(option ->
@@ -235,8 +229,8 @@ public class OptionsAccessHandler {
 
   @Environment(EnvType.CLIENT)
   private void runReloaders() {
-    reloadersFromModifiedOptions.forEach(Reloader::run);
-    reloadersFromModifiedOptions.clear();
+    reloadersToRun.forEach(Reloader::run);
+    reloadersToRun.clear();
   }
 
   private OptionsStorage<?> getOptionsStorage(String id) {
