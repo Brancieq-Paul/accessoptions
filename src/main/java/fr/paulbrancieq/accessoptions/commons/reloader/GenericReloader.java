@@ -2,19 +2,27 @@ package fr.paulbrancieq.accessoptions.commons.reloader;
 
 import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
 import fr.paulbrancieq.accessoptions.commons.options.Option;
-import net.minecraft.text.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class GenericReloader implements Reloader {
   private Runnable runnable;
   private final Collection<Option<?>> associatedModifiedOptions = new ArrayList<>();
   protected final OptionsAccessHandler handler;
+  private final List<Class<? extends Reloader>> parents = new ArrayList<>();
 
-  public GenericReloader(Runnable runnable, OptionsAccessHandler handler) {
+  @SafeVarargs
+  public GenericReloader(Runnable runnable, OptionsAccessHandler handler, Class<? extends Reloader>... parents) {
     setRunnable(runnable);
     this.handler = handler;
+    Arrays.stream(parents).forEach((parent) -> {
+      if (parent != null) {
+        this.parents.add(parent);
+      }
+    });
   }
 
   @Override
@@ -25,10 +33,7 @@ public class GenericReloader implements Reloader {
   @Override
   public Boolean isChildOf(Reloader otherReloader) {
     // Verify if otherReloader is the parent class of this
-    if (otherReloader.getClass() != this.getClass() && otherReloader.getClass().isAssignableFrom(this.getClass())) {
-      return this.runnable.equals(((GenericReloader) otherReloader).runnable);
-    }
-    return false;
+    return parents.contains(otherReloader.getClass());
   }
 
   @Override
@@ -37,7 +42,7 @@ public class GenericReloader implements Reloader {
     return otherReloader.getClass() == this.getClass();
   }
 
-  protected void setRunnable(Runnable runnable) {
+  private void setRunnable(Runnable runnable) {
     this.runnable = runnable;
   }
 

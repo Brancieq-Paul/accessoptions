@@ -4,14 +4,15 @@ import fr.paulbrancieq.accessoptions.AccessOptions;
 import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
 
 import fr.paulbrancieq.accessoptions.commons.options.Option;
+import fr.paulbrancieq.accessoptions.commons.reloader.AskConfirmation;
+import fr.paulbrancieq.accessoptions.commons.reloader.GenericReloader;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.NotNull;
 
-public class RequiresGameRestart extends ForceRequiresGameRestart {
+public class RequiresGameRestart extends GenericReloader implements AskConfirmation {
 
   public RequiresGameRestart(OptionsAccessHandler handler) {
-    super(handler);
+    super(() -> handler.setRestartNeeded(true), handler, ForceRequiresGameRestart.class);
   }
 
   @Override
