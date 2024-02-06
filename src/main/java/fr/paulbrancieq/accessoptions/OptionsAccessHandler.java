@@ -11,6 +11,7 @@ import fr.paulbrancieq.accessoptions.commons.storage.StorageSupplier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 
 import java.util.*;
 
@@ -23,6 +24,8 @@ public class OptionsAccessHandler {
   protected final List<Reloader> reloadersToRun = new ArrayList<>();
   private Boolean restartNeeded = false;
   private ConfirmationAsker confirmationAsker;
+  private Boolean ignoreOptionNotModified = false;
+  private Boolean chatFeedback = false;
 
   @Environment(EnvType.CLIENT)
   public OptionsAccessHandler() {
@@ -39,54 +42,54 @@ public class OptionsAccessHandler {
   }
 
   @Environment(EnvType.CLIENT)
-  public void instantModifyAndApplyOption(String modId, String optionId, Object value) throws
-      AccessOptionsException.OptionNotFound,
-      AccessOptionsException.OptionStorageNotFound,
-      AccessOptionsException.OptionTypeMismatch {
-    OptionsStorage<?> optionsStorage = getOptionsStorage(modId);
-    if (optionsStorage == null) {
-      throw new AccessOptionsException.OptionStorageNotFound(modId);
-    }
-    Option<?> option = optionsStorage.getOption(optionId);
-    if (option == null) {
-      throw new AccessOptionsException.OptionNotFound(modId, optionId);
-    }
-    instantModifyAndApplyOption(option, value);
-  }
-
-  @Environment(EnvType.CLIENT)
-  public void instantModifyAndApplyOption(Option<?> option, Object value) throws
-      AccessOptionsException.OptionTypeMismatch {
-    modifyOption(option, value);
+  public void instantModifyAndApplyOption(String modId, String optionId, Object value) {
     try {
-      applyOptions(false);
-    } catch (AccessOptionsException.OptionNotModified e) {
-      // Should not happen
-      throw new RuntimeException(e);
+      OptionsStorage<?> optionsStorage = getOptionsStorage(modId);
+      if (optionsStorage == null) {
+        throw new AccessOptionsException.OptionStorageNotFound(modId);
+      }
+      Option<?> option = optionsStorage.getOption(optionId);
+      if (option == null) {
+        throw new AccessOptionsException.OptionNotFound(modId, optionId);
+      }
+      instantModifyAndApplyOption(option, value);
+    } catch (AccessOptionsException.OptionStorageNotFound|AccessOptionsException.OptionNotFound e) {
+      sendFeedback(e.getMessage());
     }
   }
 
   @Environment(EnvType.CLIENT)
-  public void modifyOption(String modId, String optionId, Object value) throws
-      AccessOptionsException.OptionNotFound,
-      AccessOptionsException.OptionStorageNotFound,
-      AccessOptionsException.OptionTypeMismatch {
-    OptionsStorage<?> optionsStorage = getOptionsStorage(modId);
-    if (optionsStorage == null) {
-      throw new AccessOptionsException.OptionStorageNotFound(modId);
-    }
-    Option<?> option = optionsStorage.getOption(optionId);
-    if (option == null) {
-      throw new AccessOptionsException.OptionNotFound(modId, optionId);
-    }
+  public void instantModifyAndApplyOption(Option<?> option, Object value) {
     modifyOption(option, value);
+    applyOptions();
   }
 
   @Environment(EnvType.CLIENT)
-  public void modifyOption(Option<?> option, Object value) throws AccessOptionsException.OptionTypeMismatch {
-    option.reset();
-    option.setValue(value);
-    modifiedOptions.add(option);
+  public void modifyOption(String modId, String optionId, Object value) {
+    try {
+      OptionsStorage<?> optionsStorage = getOptionsStorage(modId);
+      if (optionsStorage == null) {
+        throw new AccessOptionsException.OptionStorageNotFound(modId);
+      }
+      Option<?> option = optionsStorage.getOption(optionId);
+      if (option == null) {
+        throw new AccessOptionsException.OptionNotFound(modId, optionId);
+      }
+      modifyOption(option, value);
+    } catch (AccessOptionsException.OptionStorageNotFound|AccessOptionsException.OptionNotFound e) {
+      sendFeedback(e.getMessage());
+    }
+  }
+
+  @Environment(EnvType.CLIENT)
+  public void modifyOption(Option<?> option, Object value) {
+    try {
+      option.reset();
+      option.setValue(value);
+      modifiedOptions.add(option);
+    } catch (AccessOptionsException.OptionTypeMismatch e) {
+      sendFeedback(e.getMessage());
+    }
   }
 
   @Environment(EnvType.CLIENT)
@@ -98,11 +101,10 @@ public class OptionsAccessHandler {
     }
   }
 
-  public void applyOptions(Boolean ignoreOptionNotModified) throws
-      AccessOptionsException.OptionNotModified {
+  public void applyOptions() {
     setPromptsReloaders();
     if (confirmationAsker.prompts.isEmpty()) {
-      applyAndSaveOptions(ignoreOptionNotModified);
+      applyAndSaveOptions();
     } else {
       MinecraftClient.getInstance().execute(() ->
           MinecraftClient.getInstance().setScreen(confirmationAsker.prompts.get(0)));
@@ -185,30 +187,21 @@ public class OptionsAccessHandler {
     }
   }
 
-  private void applyAndSaveOptions() {
-    try {
-      applyAndSaveOptions(true);
-    } catch (AccessOptionsException.OptionNotModified e) {
-      // Should not happen
-      throw new RuntimeException(e);
-    }
-  }
-
   @Environment(EnvType.CLIENT)
-  private void applyAndSaveOptions(Boolean ignoreOptionNotModified) throws
-      AccessOptionsException.OptionNotModified {
+  private void applyAndSaveOptions() {
     for (Option<?> option : modifiedOptions) {
       try {
         applyModifiedOption(option);
       } catch (AccessOptionsException.OptionNotModified e) {
         if (!ignoreOptionNotModified) {
-          throw e;
+          sendFeedback(e.getMessage());
         }
         AccessOptions.getLogger().warn(e.getMessage());
       }
     }
     modifiedStorages.forEach(OptionsStorage::save);
     runReloaders();
+    sendFeedback("Options applied and saved.");
     modifiedOptions.clear();
     modifiedStorages.clear();
     restartIfNeeded();
@@ -240,5 +233,20 @@ public class OptionsAccessHandler {
 
   private OptionsStorage<?> getOptionsStorage(String id) {
     return modOptionsStoragesMap.get(id);
+  }
+
+  public void setChatFeedback(Boolean chatFeedback) {
+    this.chatFeedback = chatFeedback;
+  }
+
+  public void setIgnoreOptionNotModified(Boolean ignoreOptionNotModified) {
+    this.ignoreOptionNotModified = ignoreOptionNotModified;
+  }
+
+  private void sendFeedback(String message) {
+    AccessOptions.getLogger().info(message);
+    if (chatFeedback) {
+      MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.of(message));
+    }
   }
 }
