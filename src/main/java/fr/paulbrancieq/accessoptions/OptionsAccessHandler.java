@@ -172,6 +172,7 @@ public class OptionsAccessHandler {
         reloader.getAssociatedModifiedOptions().forEach(option ->
             ((AskConfirmation) reloader).getPromptAnswerConsumer(option).accept(confirmationResult));
         runAfterAllConfirmations.run();
+        MinecraftClient.getInstance().execute(() -> MinecraftClient.getInstance().setScreen(null));
       }, ((AskConfirmation) reloader).getName(), ((AskConfirmation) reloader).getConfirmationText(), reloader);
       if (!prompts.isEmpty()) {
         prompts.get(prompts.size() - 1).setCallback((confirmationResult) -> {
@@ -181,6 +182,7 @@ public class OptionsAccessHandler {
           reloader.getAssociatedModifiedOptions().forEach(option ->
               ((AskConfirmation) reloader).getPromptAnswerConsumer(option).accept(confirmationResult)
           );
+          MinecraftClient.getInstance().execute(() -> MinecraftClient.getInstance().setScreen(prompt));
         });
       }
       prompts.add(prompt);
