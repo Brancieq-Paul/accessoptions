@@ -6,6 +6,9 @@ import net.minecraft.client.MinecraftClient;
 
 public class RequiresRendererReload extends GenericReloader {
   public RequiresRendererReload(OptionsAccessHandler handler) {
-    super(() -> MinecraftClient.getInstance().worldRenderer.reload(), handler, RequiresGameRestart.class);
+    super(() ->
+        MinecraftClient.getInstance().execute(
+            () -> MinecraftClient.getInstance().worldRenderer.reload()
+        ), handler, RequiresGameRestart.class);
   }
 }
