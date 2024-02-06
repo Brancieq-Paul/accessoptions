@@ -7,6 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface AskConfirmation {
   BooleanConsumer getPromptAnswerConsumer(Option<?> option);
-  @NotNull Text getName();
-  @NotNull Text getConfirmationText();
+  Text getName();
+  Text getConfirmationText();
 }
