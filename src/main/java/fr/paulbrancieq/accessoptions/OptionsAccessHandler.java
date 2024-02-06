@@ -196,7 +196,6 @@ public class OptionsAccessHandler {
         if (!ignoreOptionNotModified) {
           sendFeedback(e.getMessage());
         }
-        AccessOptions.getLogger().warn(e.getMessage());
       }
     }
     modifiedStorages.forEach(OptionsStorage::save);
