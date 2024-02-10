@@ -8,14 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AccessOptions implements ModInitializer {
+  @SuppressWarnings({"SpellCheckingInspection", "unused"})
   public static final String MOD_ID = "accessoptions";
   public static final String MOD_NAME = "Access Options";
-  private static AccessOptions INSTANCE;
   private static Logger LOGGER;
 
   @Override
   public void onInitialize() {
-    INSTANCE = this;
     OptionsAccessHandler.registerModOptionsStorageSupplier(
         new StorageSupplierImpl(
             MinecraftOptionsStorage::new,
@@ -28,10 +27,6 @@ public class AccessOptions implements ModInitializer {
             "sodium"
         )
     );
-  }
-
-  public static AccessOptions getInstance() {
-    return INSTANCE;
   }
 
   public static Logger getLogger() {

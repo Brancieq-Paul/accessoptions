@@ -7,7 +7,6 @@ import fr.paulbrancieq.accessoptions.commons.reloader.AskConfirmation;
 import fr.paulbrancieq.accessoptions.commons.reloader.GenericReloader;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.NotNull;
 
 public class ForceRequiresGameRestart extends GenericReloader implements AskConfirmation {
 

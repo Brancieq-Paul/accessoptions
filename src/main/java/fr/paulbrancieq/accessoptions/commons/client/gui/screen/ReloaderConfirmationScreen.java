@@ -54,16 +54,14 @@ public class ReloaderConfirmationScreen extends Screen {
   }
 
   protected void addButtons(int y) {
-    this.addButton(ButtonWidget.builder(this.yesText, (button) -> {
-      this.callback.accept(true);
-    }).dimensions(this.width / 2 - 155, y, 150, 20).build());
-    this.addButton(ButtonWidget.builder(this.noText, (button) -> {
-      this.callback.accept(false);
-    }).dimensions(this.width / 2 - 155 + 160, y, 150, 20).build());
+    this.addButton(ButtonWidget.builder(this.yesText, (button) ->
+        this.callback.accept(true)).dimensions(this.width / 2 - 155, y, 150, 20).build());
+    this.addButton(ButtonWidget.builder(this.noText, (button) ->
+        this.callback.accept(false)).dimensions(this.width / 2 - 155 + 160, y, 150, 20).build());
   }
 
   protected void addButton(ButtonWidget button) {
-    this.buttons.add((ButtonWidget)this.addDrawableChild(button));
+    this.buttons.add(this.addDrawableChild(button));
   }
 
   public void render(DrawContext context, int mouseX, int mouseY, float delta) {
@@ -89,12 +87,13 @@ public class ReloaderConfirmationScreen extends Screen {
     return var10000 * 9;
   }
 
+  @SuppressWarnings("unused")
   public void disableButtons(int ticks) {
     this.buttonEnableTimer = ticks;
 
     ButtonWidget buttonWidget;
-    for(Iterator var2 = this.buttons.iterator(); var2.hasNext(); buttonWidget.active = false) {
-      buttonWidget = (ButtonWidget)var2.next();
+    for(Iterator<ButtonWidget> var2 = this.buttons.iterator(); var2.hasNext(); buttonWidget.active = false) {
+      buttonWidget = var2.next();
     }
 
   }
@@ -103,8 +102,8 @@ public class ReloaderConfirmationScreen extends Screen {
     super.tick();
     ButtonWidget buttonWidget;
     if (--this.buttonEnableTimer == 0) {
-      for(Iterator var1 = this.buttons.iterator(); var1.hasNext(); buttonWidget.active = true) {
-        buttonWidget = (ButtonWidget)var1.next();
+      for(Iterator<ButtonWidget> var1 = this.buttons.iterator(); var1.hasNext(); buttonWidget.active = true) {
+        buttonWidget = var1.next();
       }
     }
 

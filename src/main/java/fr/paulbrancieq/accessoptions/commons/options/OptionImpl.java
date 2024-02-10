@@ -163,6 +163,7 @@ public class OptionImpl<S, T> implements Option<T> {
     }
 
 
+    @SuppressWarnings("unused")
     public Builder<S, T> setBinding(OptionBinding<S, T> binding) {
       Validate.notNull(binding, "Argument must not be null");
 
@@ -187,6 +188,7 @@ public class OptionImpl<S, T> implements Option<T> {
       return this;
     }
 
+    @SuppressWarnings("unused")
     public Builder<S, T> setEnabled(boolean value) {
       this.enabled = value;
 

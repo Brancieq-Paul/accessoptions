@@ -10,8 +10,10 @@ import java.util.Collection;
 public interface Option<T> {
   Text getName();
 
+  @SuppressWarnings("unused")
   Text getTooltip();
 
+  @SuppressWarnings("unused")
   T getValue();
 
   void setValue(Object value) throws AccessOptionsException.OptionTypeMismatch;
@@ -20,6 +22,7 @@ public interface Option<T> {
 
   OptionsStorage<?> getStorage();
 
+  @SuppressWarnings("unused")
   boolean isAvailable();
 
   boolean hasChanged();

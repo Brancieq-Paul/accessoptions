@@ -12,7 +12,6 @@ import net.minecraft.client.render.ChunkBuilderMode;
 import net.minecraft.client.tutorial.TutorialStep;
 import net.minecraft.network.message.ChatVisibility;
 import net.minecraft.text.Text;
-import net.minecraft.client.gui.screen.option.ControlsOptionsScreen;
 import net.minecraft.util.Arm;
 
 import java.util.function.Function;
