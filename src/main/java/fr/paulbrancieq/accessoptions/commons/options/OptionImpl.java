@@ -12,11 +12,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class OptionImpl<S, T> implements Option<T> {
   private final OptionsStorage<S> storage;
   private final Function<String, T> valueFromString;
+  private final Consumer<T> valueVerifier;
   private final OptionBinding<S, T> binding;
   private final List<Reloader> reloaders;
   private final Text name;
@@ -32,6 +34,7 @@ public class OptionImpl<S, T> implements Option<T> {
                      Text tooltip,
                      OptionBinding<S, T> binding,
                      Function<String, T> valueFromString,
+                     Consumer<T> valueVerifier,
                      Collection<Reloader> reloaders,
                      boolean enabled) {
     this.storage = storage;
@@ -40,6 +43,7 @@ public class OptionImpl<S, T> implements Option<T> {
     this.tooltip = tooltip;
     this.binding = binding;
     this.valueFromString = valueFromString;
+    this.valueVerifier = valueVerifier;
     this.reloaders = List.copyOf(reloaders);
     this.enabled = enabled;
   }
@@ -71,6 +75,7 @@ public class OptionImpl<S, T> implements Option<T> {
       }
     }
     if (value.getClass().isInstance(newValue)) {
+      this.valueVerifier.accept((T) newValue);
       this.modifiedValue = (T) newValue;
     }
     else {
@@ -129,6 +134,7 @@ public class OptionImpl<S, T> implements Option<T> {
     private OptionBinding<S, T> binding;
     @SuppressWarnings("unchecked")
     private Function<String, T> valueFromString = (value) -> (T) value;
+    private Consumer<T> valueVerifier = (value) -> {};
     private final List<Reloader> reloaders = new ArrayList<>();
     private boolean enabled = true;
 
@@ -180,6 +186,14 @@ public class OptionImpl<S, T> implements Option<T> {
       return this;
     }
 
+    public Builder<S, T> setValueVerifier(Consumer<T> valueVerifier) {
+      Validate.notNull(valueVerifier, "Argument must not be null");
+
+      this.valueVerifier = valueVerifier;
+
+      return this;
+    }
+
     public Builder<S, T> setReloaders(Reloader... reloaders) {
       Validate.notNull(reloaders, "Argument must not be null");
 
@@ -200,7 +214,8 @@ public class OptionImpl<S, T> implements Option<T> {
       Validate.notNull(this.tooltip, "Tooltip must be specified");
       Validate.notNull(this.binding, "Option binding must be specified");
 
-      return new OptionImpl<>(this.storage, this.optionId, this.name, this.tooltip, this.binding, this.valueFromString, this.reloaders, this.enabled);
+      return new OptionImpl<>(this.storage, this.optionId, this.name, this.tooltip, this.binding,
+          this.valueFromString, this.valueVerifier, this.reloaders, this.enabled);
     }
   }
 }
