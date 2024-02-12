@@ -23,24 +23,21 @@ public class OptionImpl<S, T> implements Option<T> {
   protected final List<Reloader> reloaders;
   protected final Text name;
   protected final String optionId;
-  protected final Text tooltip;
   protected T value;
   protected T modifiedValue;
   protected final boolean enabled;
 
   protected OptionImpl(OptionsStorage<S> storage,
-                     String optionId,
-                     Text name,
-                     Text tooltip,
-                     OptionBinding<S, T> binding,
-                     Function<String, T> valueFromString,
+                       String optionId,
+                       Text name,
+                       OptionBinding<S, T> binding,
+                       Function<String, T> valueFromString,
                        ValueVerifier<T> valueVerifier,
-                     Collection<Reloader> reloaders,
-                     boolean enabled) {
+                       Collection<Reloader> reloaders,
+                       boolean enabled) {
     this.storage = storage;
     this.name = name;
     this.optionId = optionId;
-    this.tooltip = tooltip;
     this.binding = binding;
     this.valueFromString = valueFromString;
     this.valueVerifier = valueVerifier;
@@ -54,11 +51,6 @@ public class OptionImpl<S, T> implements Option<T> {
   }
 
   @Override
-  public Text getTooltip() {
-    return this.tooltip;
-  }
-
-  @Override
   public T getValue() {
     return this.modifiedValue;
   }
@@ -69,16 +61,14 @@ public class OptionImpl<S, T> implements Option<T> {
     if (newValue instanceof String && !value.getClass().isAssignableFrom(String.class)) {
       try {
         newValue = getValueFromString((String) newValue);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
       }
     }
     if (value.getClass().isInstance(newValue)) {
       this.valueVerifier.accept((T) newValue);
       this.modifiedValue = (T) newValue;
-    }
-    else {
+    } else {
       throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
     }
   }
@@ -130,11 +120,11 @@ public class OptionImpl<S, T> implements Option<T> {
     protected final OptionsStorage<S> storage;
     protected final String optionId;
     protected Text name;
-    protected Text tooltip;
     protected OptionBinding<S, T> binding;
     @SuppressWarnings("unchecked")
     protected Function<String, T> valueFromString = (value) -> (T) value;
-    protected ValueVerifier<T> valueVerifier = (value) -> {};
+    protected ValueVerifier<T> valueVerifier = (value) -> {
+    };
     protected final List<Reloader> reloaders = new ArrayList<>();
     protected boolean enabled = true;
 
@@ -147,14 +137,6 @@ public class OptionImpl<S, T> implements Option<T> {
       Validate.notNull(name, "Argument must not be null");
 
       this.name = name;
-
-      return this;
-    }
-
-    public Builder<S, T> setTooltip(Text tooltip) {
-      Validate.notNull(tooltip, "Argument must not be null");
-
-      this.tooltip = tooltip;
 
       return this;
     }
@@ -209,12 +191,12 @@ public class OptionImpl<S, T> implements Option<T> {
       return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public OptionImpl<S, T> build() {
       Validate.notNull(this.name, "Name must be specified");
-      Validate.notNull(this.tooltip, "Tooltip must be specified");
       Validate.notNull(this.binding, "Option binding must be specified");
 
-      return new OptionImpl<>(this.storage, this.optionId, this.name, this.tooltip, this.binding,
+      return new OptionImpl<>(this.storage, this.optionId, this.name, this.binding,
           this.valueFromString, this.valueVerifier, this.reloaders, this.enabled);
     }
   }

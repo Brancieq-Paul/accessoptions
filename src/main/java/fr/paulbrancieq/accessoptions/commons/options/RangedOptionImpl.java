@@ -18,7 +18,6 @@ public class RangedOptionImpl<S> extends OptionImpl<S, Number> implements Ranged
   protected RangedOptionImpl(OptionsStorage<S> storage,
                      String optionId,
                      Text name,
-                     Text tooltip,
                      OptionBinding<S, Number> binding,
                      Function<String, Number> valueFromString,
                      ValueVerifier<Number> valueVerifier,
@@ -26,7 +25,7 @@ public class RangedOptionImpl<S> extends OptionImpl<S, Number> implements Ranged
                      boolean enabled,
                      Number min,
                      Number max) {
-    super(storage, optionId, name, tooltip, binding, valueFromString, valueVerifier, reloaders, enabled);
+    super(storage, optionId, name, binding, valueFromString, valueVerifier, reloaders, enabled);
     this.min = min;
     this.max = max;
   }
@@ -67,7 +66,7 @@ public class RangedOptionImpl<S> extends OptionImpl<S, Number> implements Ranged
       Validate.notNull(min, "Min value must be set");
       Validate.notNull(max, "Max value must be set");
 
-      return new RangedOptionImpl<>(storage, optionId, name, tooltip, binding, valueFromString, valueVerifier, reloaders, enabled, min, max);
+      return new RangedOptionImpl<>(storage, optionId, name, binding, valueFromString, valueVerifier, reloaders, enabled, min, max);
     }
   }
 }
