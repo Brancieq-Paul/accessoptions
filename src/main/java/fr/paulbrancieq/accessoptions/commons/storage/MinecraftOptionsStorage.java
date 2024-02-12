@@ -3,6 +3,7 @@ package fr.paulbrancieq.accessoptions.commons.storage;
 import fr.paulbrancieq.accessoptions.AccessOptions;
 import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
+import fr.paulbrancieq.accessoptions.commons.options.RangedNumberOption;
 import fr.paulbrancieq.accessoptions.commons.reloader.integrated.RequiresRendererReload;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -149,175 +150,176 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("invertYMouse", OptionImpl.createBuilder(Boolean.class, this,
-        "invertYMouse")
+            "invertYMouse")
         .setName(Text.translatable("options.invertMouse"))
         .setBinding((options, value) -> options.getInvertYMouse().setValue(value),
             options -> options.getInvertYMouse().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("discreteMouseScroll", OptionImpl.createBuilder(Boolean.class, this,
-        "discreteMouseScroll")
+            "discreteMouseScroll")
         .setName(Text.translatable("options.discrete_mouse_scroll"))
         .setBinding((options, value) -> options.getDiscreteMouseScroll().setValue(value),
             options -> options.getDiscreteMouseScroll().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("realmsNotifications", OptionImpl.createBuilder(Boolean.class, this,
-        "realmsNotifications")
+            "realmsNotifications")
         .setName(Text.translatable("options.realmsNotifications"))
         .setBinding((options, value) -> options.getRealmsNotifications().setValue(value),
             options -> options.getRealmsNotifications().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("reducedDebugInfo", OptionImpl.createBuilder(Boolean.class, this,
-        "reducedDebugInfo")
+            "reducedDebugInfo")
         .setName(Text.translatable("options.reducedDebugInfo"))
         .setBinding((options, value) -> options.getReducedDebugInfo().setValue(value),
             options -> options.getReducedDebugInfo().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("showSubtitles", OptionImpl.createBuilder(Boolean.class, this,
-        "showSubtitles")
+            "showSubtitles")
         .setName(Text.translatable("options.showSubtitles"))
         .setBinding((options, value) -> options.getShowSubtitles().setValue(value),
             options -> options.getShowSubtitles().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("directionalAudio", OptionImpl.createBuilder(Boolean.class, this,
-        "directionalAudio")
+            "directionalAudio")
         .setName(Text.translatable("options.directionalAudio"))
         .setBinding((options, value) -> options.getDirectionalAudio().setValue(value),
             options -> options.getDirectionalAudio().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("touchscreen", OptionImpl.createBuilder(Boolean.class, this,
-        "touchscreen")
+            "touchscreen")
         .setName(Text.translatable("options.touchscreen"))
         .setBinding((options, value) -> options.getTouchscreen().setValue(value),
             options -> options.getTouchscreen().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("fullscreen", OptionImpl.createBuilder(Boolean.class, this,
-        "fullscreen")
+            "fullscreen")
         .setName(Text.translatable("options.fullscreen"))
         .setBinding((options, value) -> options.getFullscreen().setValue(value),
             options -> options.getFullscreen().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("bobView", OptionImpl.createBuilder(Boolean.class, this,
-        "bobView")
+            "bobView")
         .setName(Text.translatable("options.viewBobbing"))
         .setBinding((options, value) -> options.getBobView().setValue(value),
             options -> options.getBobView().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("toggleCrouch", OptionImpl.createBuilder(Boolean.class, this,
-        "toggleCrouch")
+            "toggleCrouch")
         .setName(Text.translatable("key.sneak"))
         .setBinding((options, value) -> options.getSneakToggled().setValue(value),
             options -> options.getSneakToggled().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("toggleSprint", OptionImpl.createBuilder(Boolean.class, this,
-        "toggleSprint")
+            "toggleSprint")
         .setName(Text.translatable("key.sprint"))
         .setBinding((options, value) -> options.getSprintToggled().setValue(value),
             options -> options.getSprintToggled().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("darkMojangStudiosBackground", OptionImpl.createBuilder(Boolean.class, this,
-        "darkMojangStudiosBackground")
+            "darkMojangStudiosBackground")
         .setName(Text.translatable("options.darkMojangStudiosBackgroundColor"))
         .setBinding((options, value) -> options.getMonochromeLogo().setValue(value),
             options -> options.getMonochromeLogo().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("hideLightningFlashes", OptionImpl.createBuilder(Boolean.class, this,
-        "hideLightningFlashes")
+            "hideLightningFlashes")
         .setName(Text.translatable("options.hideLightningFlashes"))
         .setBinding((options, value) -> options.getHideMatchedNames().setValue(value),
             options -> options.getHideMatchedNames().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("hideSplashTexts", OptionImpl.createBuilder(Boolean.class, this,
-        "hideSplashTexts")
+            "hideSplashTexts")
         .setName(Text.translatable("options.hideSplashTexts"))
         .setBinding((options, value) -> options.getHideMatchedNames().setValue(value),
             options -> options.getHideMatchedNames().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("mouseSensitivity", OptionImpl.createBuilder(Double.class, this,
-        "mouseSensitivity")
+            "mouseSensitivity")
         .setName(Text.translatable("options.sensitivity"))
         .setBinding((options, value) -> options.getMouseSensitivity().setValue(value),
             options -> options.getMouseSensitivity().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
-    this.registerOption("fov", OptionImpl.createBuilder(Integer.class, this,
-        "fov")
+    this.registerOption("fov", RangedNumberOption.createBuilder(this,
+            "fov")
+        .setRange(0, 100)
         .setName(Text.translatable("options.fov"))
-        .setBinding((options, value) -> options.getFov().setValue(value),
+        .setBinding((options, value) -> options.getFov().setValue((Integer)value),
             options -> options.getFov().getValue())
         .setValueFromString(Integer::parseInt)
         .build());
     this.registerOption("screenEffectScale", OptionImpl.createBuilder(Double.class, this,
-        "screenEffectScale")
+            "screenEffectScale")
         .setName(Text.translatable("options.screenEffectScale"))
         .setBinding((options, value) -> options.getDistortionEffectScale().setValue(value),
             options -> options.getDistortionEffectScale().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("fovEffectScale", OptionImpl.createBuilder(Double.class, this,
-        "fovEffectScale")
+            "fovEffectScale")
         .setName(Text.translatable("options.fovEffectScale"))
         .setBinding((options, value) -> options.getFovEffectScale().setValue(value),
             options -> options.getFovEffectScale().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("darknessEffectScale", OptionImpl.createBuilder(Double.class, this,
-        "darknessEffectScale")
+            "darknessEffectScale")
         .setName(Text.translatable("options.darknessEffectScale"))
         .setBinding((options, value) -> options.getDarknessEffectScale().setValue(value),
             options -> options.getDarknessEffectScale().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("glintSpeed", OptionImpl.createBuilder(Double.class, this,
-        "glintSpeed")
+            "glintSpeed")
         .setName(Text.translatable("options.glintSpeed"))
         .setBinding((options, value) -> options.getGlintSpeed().setValue(value),
             options -> options.getGlintSpeed().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("glintStrength", OptionImpl.createBuilder(Double.class, this,
-        "glintStrength")
+            "glintStrength")
         .setName(Text.translatable("options.glintStrength"))
         .setBinding((options, value) -> options.getGlintStrength().setValue(value),
             options -> options.getGlintStrength().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("damageTiltStrength", OptionImpl.createBuilder(Double.class, this,
-        "damageTiltStrength")
+            "damageTiltStrength")
         .setName(Text.translatable("options.damageTiltStrength"))
         .setBinding((options, value) -> options.getDamageTiltStrength().setValue(value),
             options -> options.getDamageTiltStrength().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("narratorHotkey", OptionImpl.createBuilder(NarratorMode.class, this,
-        "narratorHotkey")
+            "narratorHotkey")
         .setName(Text.translatable("options.narrator"))
         .setBinding((options, value) -> options.getNarrator().setValue(value),
             options -> options.getNarrator().getValue())
         .setValueFromString(narratorModeStringConsumer)
         .build());
     this.registerOption("gamma", OptionImpl.createBuilder(Double.class, this,
-        "gamma")
+            "gamma")
         .setName(Text.translatable("options.gamma"))
         .setBinding((options, value) -> options.getGamma().setValue(value),
             options -> options.getGamma().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("renderDistance", OptionImpl.createBuilder(Integer.class, this,
-        "renderDistance")
+            "renderDistance")
         .setName(Text.translatable("options.renderDistance"))
         .setBinding((options, value) -> options.getViewDistance().setValue(value),
             options -> options.getViewDistance().getValue())
@@ -325,45 +327,45 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
     this.registerOption("simulationDistance", OptionImpl.createBuilder(Integer.class, this,
-        "simulationDistance")
+            "simulationDistance")
         .setName(Text.translatable("options.simulationDistance"))
         .setBinding((options, value) -> {
           options.getSimulationDistance().setValue(value);
           client.onResolutionChanged();
-          }, options -> options.getSimulationDistance().getValue())
+        }, options -> options.getSimulationDistance().getValue())
         .setValueFromString(Integer::parseInt)
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
     this.registerOption("entityDistanceScaling", OptionImpl.createBuilder(Double.class, this,
-        "entityDistanceScaling")
+            "entityDistanceScaling")
         .setName(Text.translatable("options.entityDistanceScaling"))
         .setBinding((options, value) -> options.getEntityDistanceScaling().setValue(value),
             options -> options.getEntityDistanceScaling().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("guiScale", OptionImpl.createBuilder(Integer.class, this,
-        "guiScale")
+            "guiScale")
         .setName(Text.translatable("options.guiScale"))
         .setBinding((options, value) -> options.getGuiScale().setValue(value),
             options -> options.getGuiScale().getValue())
         .setValueFromString(Integer::parseInt)
         .build());
     this.registerOption("particles", OptionImpl.createBuilder(ParticlesMode.class, this,
-        "particles")
+            "particles")
         .setName(Text.translatable("options.particles"))
         .setBinding((options, value) -> options.getParticles().setValue(value),
             options -> options.getParticles().getValue())
         .setValueFromString(particlesModeStringConsumer)
         .build());
     this.registerOption("maxFps", OptionImpl.createBuilder(Integer.class, this,
-        "maxFps")
+            "maxFps")
         .setName(Text.translatable("options.framerateLimit"))
         .setBinding((options, value) -> options.getMaxFps().setValue(value),
             options -> options.getMaxFps().getValue())
         .setValueFromString(Integer::parseInt)
         .build());
     this.registerOption("graphicsMode", OptionImpl.createBuilder(GraphicsMode.class, this,
-        "graphicsMode")
+            "graphicsMode")
         .setName(Text.translatable("options.graphics"))
         .setBinding((options, value) -> options.getGraphicsMode().setValue(value),
             options -> options.getGraphicsMode().getValue())
@@ -371,7 +373,7 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
     this.registerOption("ao", OptionImpl.createBuilder(Boolean.class, this,
-        "ao")
+            "ao")
         .setName(Text.translatable("options.ao"))
         .setBinding((options, value) -> options.getAo().setValue(value),
             options -> options.getAo().getValue())
@@ -379,7 +381,7 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
     this.registerOption("prioritizeChunkUpdates", OptionImpl.createBuilder(ChunkBuilderMode.class, this,
-        "prioritizeChunkUpdates")
+            "prioritizeChunkUpdates")
         .setName(Text.translatable("options.prioritizeChunkUpdates"))
         .setBinding((options, value) -> options.getChunkBuilderMode().setValue(value),
             options -> options.getChunkBuilderMode().getValue())
@@ -387,7 +389,7 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
     this.registerOption("biomeBlendRadius", OptionImpl.createBuilder(Integer.class, this,
-        "biomeBlendRadius")
+            "biomeBlendRadius")
         .setName(Text.translatable("options.biomeBlendRadius"))
         .setBinding((options, value) -> options.getBiomeBlendRadius().setValue(value),
             options -> options.getBiomeBlendRadius().getValue())
@@ -395,7 +397,7 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
     this.registerOption("renderClouds", OptionImpl.createBuilder(CloudRenderMode.class, this,
-        "renderClouds")
+            "renderClouds")
         .setName(Text.translatable("options.renderClouds"))
         .setBinding((options, value) -> options.getCloudRenderMode().setValue(value),
             options -> options.getCloudRenderMode().getValue())
@@ -404,112 +406,112 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
         .build());
     // TODO Reload language properly
     this.registerOption("lang", OptionImpl.createBuilder(String.class, this,
-        "lang")
+            "lang")
         .setName(Text.translatable("options.language"))
         .setBinding((options, value) -> options.language = value,
             options -> options.language)
         .setValueFromString(String::toString)
         .build());
     this.registerOption("soundDevice", OptionImpl.createBuilder(String.class, this,
-        "soundDevice")
+            "soundDevice")
         .setName(Text.translatable("options.audioDevice"))
         .setBinding((options, value) -> options.getSoundDevice().setValue(value),
             options -> options.getSoundDevice().getValue())
         .setValueFromString(String::toString)
         .build());
     this.registerOption("chatVisibility", OptionImpl.createBuilder(ChatVisibility.class, this,
-        "chatVisibility")
+            "chatVisibility")
         .setName(Text.translatable("options.chat.visibility"))
         .setBinding((options, value) -> options.getChatVisibility().setValue(value),
             options -> options.getChatVisibility().getValue())
         .setValueFromString(chatVisibilityStringConsumer)
         .build());
     this.registerOption("chatOpacity", OptionImpl.createBuilder(Double.class, this,
-        "chatOpacity")
+            "chatOpacity")
         .setName(Text.translatable("options.chat.opacity"))
         .setBinding((options, value) -> options.getChatOpacity().setValue(value),
             options -> options.getChatOpacity().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("chatLineSpacing", OptionImpl.createBuilder(Double.class, this,
-        "chatLineSpacing")
+            "chatLineSpacing")
         .setName(Text.translatable("options.chat.line_spacing"))
         .setBinding((options, value) -> options.getChatLineSpacing().setValue(value),
             options -> options.getChatLineSpacing().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("textBackgroundOpacity", OptionImpl.createBuilder(Double.class, this,
-        "textBackgroundOpacity")
+            "textBackgroundOpacity")
         .setName(Text.translatable("options.accessibility.text_background_opacity"))
         .setBinding((options, value) -> options.getTextBackgroundOpacity().setValue(value),
             options -> options.getTextBackgroundOpacity().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("backgroundForChatOnly", OptionImpl.createBuilder(Boolean.class, this,
-        "backgroundForChatOnly")
+            "backgroundForChatOnly")
         .setName(Text.translatable("options.accessibility.text_background"))
         .setBinding((options, value) -> options.getBackgroundForChatOnly().setValue(value),
             options -> options.getBackgroundForChatOnly().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("advancedItemTooltips", OptionImpl.createBuilder(Boolean.class, this,
-        "advancedItemTooltips")
+            "advancedItemTooltips")
         .setName(Text.of("Advanced item tooltips"))
         .setBinding((options, value) -> options.advancedItemTooltips = value,
             options -> options.advancedItemTooltips)
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("pauseOnLostFocus", OptionImpl.createBuilder(Boolean.class, this,
-        "pauseOnLostFocus")
+            "pauseOnLostFocus")
         .setName(Text.of("Pause on lost focus"))
         .setBinding((options, value) -> options.pauseOnLostFocus = value,
             options -> options.pauseOnLostFocus)
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("chatHeightFocused", OptionImpl.createBuilder(Double.class, this,
-        "chatHeightFocused")
+            "chatHeightFocused")
         .setName(Text.of("Chat height focused"))
         .setBinding((options, value) -> options.getChatHeightFocused().setValue(value),
             options -> options.getChatHeightFocused().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("chatDelay", OptionImpl.createBuilder(Double.class, this,
-        "chatDelay")
+            "chatDelay")
         .setName(Text.of("Chat delay"))
         .setBinding((options, value) -> options.getChatDelay().setValue(value),
             options -> options.getChatDelay().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("chatHeightUnfocused", OptionImpl.createBuilder(Double.class, this,
-        "chatHeightUnfocused")
+            "chatHeightUnfocused")
         .setName(Text.of("Chat height unfocused"))
         .setBinding((options, value) -> options.getChatHeightUnfocused().setValue(value),
             options -> options.getChatHeightUnfocused().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("chatScale", OptionImpl.createBuilder(Double.class, this,
-        "chatScale")
+            "chatScale")
         .setName(Text.of("Chat scale"))
         .setBinding((options, value) -> options.getChatScale().setValue(value),
             options -> options.getChatScale().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("chatWidth", OptionImpl.createBuilder(Double.class, this,
-        "chatWidth")
+            "chatWidth")
         .setName(Text.of("Chat width"))
         .setBinding((options, value) -> options.getChatWidth().setValue(value),
             options -> options.getChatWidth().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("notificationDisplayTime", OptionImpl.createBuilder(Double.class, this,
-        "notificationDisplayTime")
+            "notificationDisplayTime")
         .setName(Text.of("Notification display time"))
         .setBinding((options, value) -> options.getNotificationDisplayTime().setValue(value),
             options -> options.getNotificationDisplayTime().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("mipmapLevels", OptionImpl.createBuilder(Integer.class, this,
-        "mipmapLevels")
+            "mipmapLevels")
         .setName(Text.of("Mipmap levels"))
         .setBinding((options, value) -> options.getMipmapLevels().setValue(value),
             options -> options.getMipmapLevels().getValue())
@@ -517,84 +519,84 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
     this.registerOption("mainHand", OptionImpl.createBuilder(Arm.class, this,
-        "mainHand")
+            "mainHand")
         .setName(Text.of("Main hand"))
         .setBinding((options, value) -> options.getMainArm().setValue(value),
             options -> options.getMainArm().getValue())
         .setValueFromString(armStringConsumer)
         .build());
     this.registerOption("attackIndicator", OptionImpl.createBuilder(AttackIndicator.class, this,
-        "attackIndicator")
+            "attackIndicator")
         .setName(Text.of("Attack indicator"))
         .setBinding((options, value) -> options.getAttackIndicator().setValue(value),
             options -> options.getAttackIndicator().getValue())
         .setValueFromString(attackIndicatorModeStringConsumer)
         .build());
     this.registerOption("narrator", OptionImpl.createBuilder(NarratorMode.class, this,
-        "narrator")
+            "narrator")
         .setName(Text.of("Narrator"))
         .setBinding((options, value) -> options.getNarrator().setValue(value),
             options -> options.getNarrator().getValue())
         .setValueFromString(narratorModeStringConsumer)
         .build());
     this.registerOption("tutorialStep", OptionImpl.createBuilder(TutorialStep.class, this,
-        "tutorialStep")
+            "tutorialStep")
         .setName(Text.of("Tutorial step"))
         .setBinding((options, value) -> options.tutorialStep = value,
             options -> options.tutorialStep)
         .setValueFromString(tutorialStepStringConsumer)
         .build());
     this.registerOption("mouseWheelSensitivity", OptionImpl.createBuilder(Double.class, this,
-        "mouseWheelSensitivity")
+            "mouseWheelSensitivity")
         .setName(Text.of("Mouse wheel sensitivity"))
         .setBinding((options, value) -> options.getMouseWheelSensitivity().setValue(value),
             options -> options.getMouseWheelSensitivity().getValue())
         .setValueFromString(Double::parseDouble)
         .build());
     this.registerOption("rawMouseInput", OptionImpl.createBuilder(Boolean.class, this,
-        "rawMouseInput")
+            "rawMouseInput")
         .setName(Text.of("Raw mouse input"))
         .setBinding((options, value) -> options.getRawMouseInput().setValue(value),
             options -> options.getRawMouseInput().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("skipMultiplayerWarning", OptionImpl.createBuilder(Boolean.class, this,
-        "skipMultiplayerWarning")
+            "skipMultiplayerWarning")
         .setName(Text.of("Skip multiplayer warning"))
         .setBinding((options, value) -> options.skipMultiplayerWarning = value,
             options -> options.skipMultiplayerWarning)
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("skipRealms32bitWarning", OptionImpl.createBuilder(Boolean.class, this,
-        "skipRealms32bitWarning")
+            "skipRealms32bitWarning")
         .setName(Text.of("Skip realms 32-bit warning"))
         .setBinding((options, value) -> options.skipRealms32BitWarning = value,
             options -> options.skipRealms32BitWarning)
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("hideMatchedNames", OptionImpl.createBuilder(Boolean.class, this,
-        "hideMatchedNames")
+            "hideMatchedNames")
         .setName(Text.of("Hide matched names"))
         .setBinding((options, value) -> options.getHideMatchedNames().setValue(value),
             options -> options.getHideMatchedNames().getValue())
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("hideBundleTutorial", OptionImpl.createBuilder(Boolean.class, this,
-        "hideBundleTutorial")
+            "hideBundleTutorial")
         .setName(Text.of("Hide bundle tutorial"))
         .setBinding((options, value) -> options.hideBundleTutorial = value,
             options -> options.hideBundleTutorial)
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("syncChunkWrites", OptionImpl.createBuilder(Boolean.class, this,
-        "syncChunkWrites")
+            "syncChunkWrites")
         .setName(Text.of("Sync chunk writes"))
         .setBinding((options, value) -> options.syncChunkWrites = value,
             options -> options.syncChunkWrites)
         .setValueFromString(Boolean::parseBoolean)
         .build());
     this.registerOption("showAutosaveIndicator", OptionImpl.createBuilder(Boolean.class, this,
-        "showAutosaveIndicator")
+            "showAutosaveIndicator")
         .setName(Text.of("Show autosave indicator"))
         .setBinding((options, value) -> options.getShowAutosaveIndicator().setValue(value),
             options -> options.getShowAutosaveIndicator().getValue())

@@ -27,22 +27,17 @@ public class OptionImpl<S, T> implements Option<T> {
   protected T modifiedValue;
   protected final boolean enabled;
 
-  protected OptionImpl(OptionsStorage<S> storage,
-                       String optionId,
-                       Text name,
-                       OptionBinding<S, T> binding,
-                       Function<String, T> valueFromString,
-                       ValueVerifier<T> valueVerifier,
-                       Collection<Reloader> reloaders,
-                       boolean enabled) {
-    this.storage = storage;
-    this.name = name;
-    this.optionId = optionId;
-    this.binding = binding;
-    this.valueFromString = valueFromString;
-    this.valueVerifier = valueVerifier;
-    this.reloaders = List.copyOf(reloaders);
-    this.enabled = enabled;
+  protected OptionImpl(Builder<S, T> builder) {
+    Validate.notNull(builder.name, "Name must be specified");
+    Validate.notNull(builder.binding, "Option binding must be specified");
+    this.storage = builder.storage;
+    this.name = builder.name;
+    this.optionId = builder.optionId;
+    this.binding = builder.binding;
+    this.valueFromString = builder.valueFromString;
+    this.valueVerifier = builder.valueVerifier;
+    this.reloaders = List.copyOf(builder.reloaders);
+    this.enabled = builder.enabled;
   }
 
   @Override
@@ -168,6 +163,7 @@ public class OptionImpl<S, T> implements Option<T> {
       return this;
     }
 
+    @SuppressWarnings("unused")
     public Builder<S, T> setValueVerifier(ValueVerifier<T> valueVerifier) {
       Validate.notNull(valueVerifier, "Argument must not be null");
 
@@ -193,11 +189,7 @@ public class OptionImpl<S, T> implements Option<T> {
 
     @SuppressWarnings("UnusedReturnValue")
     public OptionImpl<S, T> build() {
-      Validate.notNull(this.name, "Name must be specified");
-      Validate.notNull(this.binding, "Option binding must be specified");
-
-      return new OptionImpl<>(this.storage, this.optionId, this.name, this.binding,
-          this.valueFromString, this.valueVerifier, this.reloaders, this.enabled);
+      return new OptionImpl<>(this);
     }
   }
 }

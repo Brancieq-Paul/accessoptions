@@ -1,7 +1,9 @@
 package fr.paulbrancieq.accessoptions.commons.options;
 
-public interface Ranged {
-  Number getMin();
+public interface Ranged<T> {
+  @SuppressWarnings("unused")
+  T getMin();
 
-  Number getMax();
+  @SuppressWarnings("unused")
+  T getMax();
 }
