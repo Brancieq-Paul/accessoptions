@@ -3,6 +3,7 @@ package fr.paulbrancieq.accessoptions.commons.options;
 import fr.paulbrancieq.accessoptions.commons.binding.GenericBinding;
 import fr.paulbrancieq.accessoptions.commons.binding.OptionBinding;
 import fr.paulbrancieq.accessoptions.commons.exeptions.AccessOptionsException;
+import fr.paulbrancieq.accessoptions.commons.exeptions.ValueVerificationException;
 import fr.paulbrancieq.accessoptions.commons.reloader.Reloader;
 import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 import net.minecraft.text.Text;
@@ -12,29 +13,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class OptionImpl<S, T> implements Option<T> {
-  private final OptionsStorage<S> storage;
-  private final Function<String, T> valueFromString;
-  private final Consumer<T> valueVerifier;
-  private final OptionBinding<S, T> binding;
-  private final List<Reloader> reloaders;
-  private final Text name;
-  private final String optionId;
-  private final Text tooltip;
-  private T value;
-  private T modifiedValue;
-  private final boolean enabled;
+  protected final OptionsStorage<S> storage;
+  protected final Function<String, T> valueFromString;
+  protected final ValueVerifier<T> valueVerifier;
+  protected final OptionBinding<S, T> binding;
+  protected final List<Reloader> reloaders;
+  protected final Text name;
+  protected final String optionId;
+  protected final Text tooltip;
+  protected T value;
+  protected T modifiedValue;
+  protected final boolean enabled;
 
-  private OptionImpl(OptionsStorage<S> storage,
+  protected OptionImpl(OptionsStorage<S> storage,
                      String optionId,
                      Text name,
                      Text tooltip,
                      OptionBinding<S, T> binding,
                      Function<String, T> valueFromString,
-                     Consumer<T> valueVerifier,
+                       ValueVerifier<T> valueVerifier,
                      Collection<Reloader> reloaders,
                      boolean enabled) {
     this.storage = storage;
@@ -65,7 +65,7 @@ public class OptionImpl<S, T> implements Option<T> {
 
   @Override
   @SuppressWarnings({"unchecked", "ConstantConditions"})
-  public void setValue(Object newValue) throws AccessOptionsException.OptionTypeMismatch {
+  public void setValue(Object newValue) throws AccessOptionsException.OptionTypeMismatch, ValueVerificationException {
     if (newValue instanceof String && !value.getClass().isAssignableFrom(String.class)) {
       try {
         newValue = getValueFromString((String) newValue);
@@ -127,18 +127,18 @@ public class OptionImpl<S, T> implements Option<T> {
   }
 
   public static class Builder<S, T> {
-    private final OptionsStorage<S> storage;
-    private final String optionId;
-    private Text name;
-    private Text tooltip;
-    private OptionBinding<S, T> binding;
+    protected final OptionsStorage<S> storage;
+    protected final String optionId;
+    protected Text name;
+    protected Text tooltip;
+    protected OptionBinding<S, T> binding;
     @SuppressWarnings("unchecked")
-    private Function<String, T> valueFromString = (value) -> (T) value;
-    private Consumer<T> valueVerifier = (value) -> {};
-    private final List<Reloader> reloaders = new ArrayList<>();
-    private boolean enabled = true;
+    protected Function<String, T> valueFromString = (value) -> (T) value;
+    protected ValueVerifier<T> valueVerifier = (value) -> {};
+    protected final List<Reloader> reloaders = new ArrayList<>();
+    protected boolean enabled = true;
 
-    private Builder(OptionsStorage<S> storage, String optionId) {
+    protected Builder(OptionsStorage<S> storage, String optionId) {
       this.storage = storage;
       this.optionId = optionId;
     }
@@ -186,7 +186,7 @@ public class OptionImpl<S, T> implements Option<T> {
       return this;
     }
 
-    public Builder<S, T> setValueVerifier(Consumer<T> valueVerifier) {
+    public Builder<S, T> setValueVerifier(ValueVerifier<T> valueVerifier) {
       Validate.notNull(valueVerifier, "Argument must not be null");
 
       this.valueVerifier = valueVerifier;

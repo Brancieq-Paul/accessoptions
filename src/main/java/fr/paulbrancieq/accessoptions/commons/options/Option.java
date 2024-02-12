@@ -1,6 +1,7 @@
 package fr.paulbrancieq.accessoptions.commons.options;
 
 import fr.paulbrancieq.accessoptions.commons.exeptions.AccessOptionsException;
+import fr.paulbrancieq.accessoptions.commons.exeptions.ValueVerificationException;
 import fr.paulbrancieq.accessoptions.commons.reloader.Reloader;
 import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 import net.minecraft.text.Text;
@@ -16,7 +17,7 @@ public interface Option<T> {
   @SuppressWarnings("unused")
   T getValue();
 
-  void setValue(Object value) throws AccessOptionsException.OptionTypeMismatch;
+  void setValue(Object value) throws AccessOptionsException.OptionTypeMismatch, ValueVerificationException;
 
   void reset();
 
