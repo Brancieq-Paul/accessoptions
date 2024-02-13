@@ -2,6 +2,7 @@ package fr.paulbrancieq.accessoptions;
 
 import fr.paulbrancieq.accessoptions.commons.client.gui.screen.ReloaderConfirmationScreen;
 import fr.paulbrancieq.accessoptions.commons.exeptions.AccessOptionsException;
+import fr.paulbrancieq.accessoptions.commons.exeptions.ValueVerificationException;
 import fr.paulbrancieq.accessoptions.commons.options.Option;
 import fr.paulbrancieq.accessoptions.commons.reloader.AskConfirmation;
 import fr.paulbrancieq.accessoptions.commons.reloader.Reloader;
@@ -64,6 +65,7 @@ public class OptionsAccessHandler {
 
   /**
    * Set if the operations should give feedback in the chat.
+   *
    * @param chatFeedback If the operations should give feedback in the chat.
    */
   @Environment(EnvType.CLIENT)
@@ -75,6 +77,7 @@ public class OptionsAccessHandler {
   /**
    * Set if the operations should give a feedback when trying to apply a modification with the new value equal to the
    * initial one.
+   *
    * @param ignoreOptionNotModified If the operations should give a feedback when trying to apply a modification with
    *                                the new value equal to the initial one.
    */
@@ -85,6 +88,7 @@ public class OptionsAccessHandler {
 
   /**
    * Sends a feedback message.
+   *
    * @param message The message to send.
    */
   @Environment(EnvType.CLIENT)
@@ -99,49 +103,44 @@ public class OptionsAccessHandler {
    * Modifies an option. The option will only be modified in the context of this OptionsAccessHandler.
    *
    * @param option The option to modify.
-   * @param value The new value for the option.
+   * @param value  The new value for the option.
    */
   @Environment(EnvType.CLIENT)
-  public void modifyOption(Option<?> option, Object value) {
-    try {
-      option.reset();
-      option.setValue(value);
-      modifiedOptions.add(option);
-    } catch (AccessOptionsException.OptionTypeMismatch e) {
-      sendFeedback(e.getMessage());
-    }
+  public void modifyOption(Option<?> option, Object value) throws
+      AccessOptionsException.OptionTypeMismatch, ValueVerificationException {
+    option.reset();
+    option.setValue(value);
+    modifiedOptions.add(option);
   }
 
   /**
    * Modifies an option. The option will only be modified in the context of this OptionsAccessHandler.
    *
-   * @param modId The id of the mod that owns the option.
+   * @param modId    The id of the mod that owns the option.
    * @param optionId The id of the option to modify.
-   * @param value The new value for the option.
+   * @param value    The new value for the option.
    */
   @SuppressWarnings("unused")
   @Environment(EnvType.CLIENT)
-  public void modifyOption(String modId, String optionId, Object value) {
-    try {
-      OptionsStorage<?> optionsStorage = getOptionsStorage(modId);
-      if (optionsStorage == null) {
-        throw new AccessOptionsException.OptionStorageNotFound(modId);
-      }
-      Option<?> option = optionsStorage.getOption(optionId);
-      if (option == null) {
-        throw new AccessOptionsException.OptionNotFound(modId, optionId);
-      }
-      modifyOption(option, value);
-    } catch (AccessOptionsException.OptionStorageNotFound|AccessOptionsException.OptionNotFound e) {
-      sendFeedback(e.getMessage());
+  public void modifyOption(String modId, String optionId, Object value) throws
+      AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.OptionNotFound,
+      AccessOptionsException.OptionStorageNotFound {
+    OptionsStorage<?> optionsStorage = getOptionsStorage(modId);
+    if (optionsStorage == null) {
+      throw new AccessOptionsException.OptionStorageNotFound(modId);
     }
+    Option<?> option = optionsStorage.getOption(optionId);
+    if (option == null) {
+      throw new AccessOptionsException.OptionNotFound(modId, optionId);
+    }
+    modifyOption(option, value);
   }
 
   /**
    * Adds a reloader to the list of reloaders that should be run because of a modified option.
    *
    * @param newReloader The reloader to add.
-   * @param option The option the reloader is from.
+   * @param option      The option the reloader is from.
    */
   @Environment(EnvType.CLIENT)
   private void addOneReloaderFromModifiedOption(Reloader newReloader, Option<?> option) {
@@ -325,10 +324,12 @@ public class OptionsAccessHandler {
    * Instantly modifies an option and applies the changes.
    *
    * @param option The option to modify.
-   * @param value The new value for the option.
+   * @param value  The new value for the option.
    */
+  @SuppressWarnings("unused")
   @Environment(EnvType.CLIENT)
-  public void instantModifyOption(Option<?> option, Object value) {
+  public void instantModifyOption(Option<?> option, Object value) throws
+      AccessOptionsException.OptionTypeMismatch, ValueVerificationException {
     modifyOption(option, value);
     applyOptions();
   }
@@ -336,26 +337,17 @@ public class OptionsAccessHandler {
   /**
    * Instantly modifies an option and applies the changes.
    *
-   * @param modId The id of the mod that owns the option.
+   * @param modId    The id of the mod that owns the option.
    * @param optionId The id of the option to modify.
-   * @param value The new value for the option.
+   * @param value    The new value for the option.
    */
   @SuppressWarnings("unused")
   @Environment(EnvType.CLIENT)
-  public void instantModifyOption(String modId, String optionId, Object value) {
-    try {
-      OptionsStorage<?> optionsStorage = getOptionsStorage(modId);
-      if (optionsStorage == null) {
-        throw new AccessOptionsException.OptionStorageNotFound(modId);
-      }
-      Option<?> option = optionsStorage.getOption(optionId);
-      if (option == null) {
-        throw new AccessOptionsException.OptionNotFound(modId, optionId);
-      }
-      instantModifyOption(option, value);
-    } catch (AccessOptionsException.OptionStorageNotFound|AccessOptionsException.OptionNotFound e) {
-      sendFeedback(e.getMessage());
-    }
+  public void instantModifyOption(String modId, String optionId, Object value) throws
+      AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.OptionNotFound,
+      AccessOptionsException.OptionStorageNotFound {
+    modifyOption(modId, optionId, value);
+    applyOptions();
   }
 
   /**
@@ -385,7 +377,7 @@ public class OptionsAccessHandler {
    * Resets an option. Used to cancel the modification of an option in the context of this OptionsAccessHandler (before
    * the options are applied).
    *
-   * @param modId The id of the mod that owns the option.
+   * @param modId    The id of the mod that owns the option.
    * @param optionId The id of the option to reset.
    */
   @SuppressWarnings("unused")
@@ -401,7 +393,7 @@ public class OptionsAccessHandler {
         throw new AccessOptionsException.OptionNotFound(modId, optionId);
       }
       resetOption(option);
-    } catch (AccessOptionsException.OptionStorageNotFound|AccessOptionsException.OptionNotFound e) {
+    } catch (AccessOptionsException.OptionStorageNotFound | AccessOptionsException.OptionNotFound e) {
       sendFeedback(e.getMessage());
     }
   }
