@@ -256,7 +256,7 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
         .build());
     this.registerOption("fov", RangedNumberOption.createBuilder(this,
             "fov")
-        .setRange(0, 100)
+        .setRange(30, 110)
         .setName(Text.translatable("options.fov"))
         .setBinding((options, value) -> options.getFov().setValue((Integer)value),
             options -> options.getFov().getValue())
