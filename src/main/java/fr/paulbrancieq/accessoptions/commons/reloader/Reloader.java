@@ -8,6 +8,6 @@ public interface Reloader {
   void run();
   Boolean isChildOf(Reloader reloader);
   Boolean isSameAs(Reloader reloader);
-  Collection<Option<?>> getAssociatedModifiedOptions();
-  void addAssociatedModifiedOption(Option<?> option);
+  Collection<Option<?, ?>> getAssociatedModifiedOptions();
+  void addAssociatedModifiedOption(Option<?, ?> option);
 }

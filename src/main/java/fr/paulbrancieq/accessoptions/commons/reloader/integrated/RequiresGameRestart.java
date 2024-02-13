@@ -16,7 +16,7 @@ public class RequiresGameRestart extends GenericReloader implements AskConfirmat
   }
 
   @Override
-  public BooleanConsumer getPromptAnswerConsumer(Option<?> option) {
+  public BooleanConsumer getPromptAnswerConsumer(Option<?, ?> option) {
     return (prompt) -> {
       if (!prompt) {
         AccessOptions.getLogger().warn("User refused to restart the game, changes to " + option.getName() +

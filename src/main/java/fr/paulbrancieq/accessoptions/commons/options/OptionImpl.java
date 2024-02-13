@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class OptionImpl<S, T> implements Option<T> {
+public class OptionImpl<S, T> implements Option<S, T> {
   protected final OptionsStorage<S> storage;
   protected final Function<String, T> valueFromString;
   protected final ValueVerifier<T> valueVerifier;
@@ -83,7 +83,7 @@ public class OptionImpl<S, T> implements Option<T> {
   }
 
   @Override
-  public OptionsStorage<?> getStorage() {
+  public OptionsStorage<S> getStorage() {
     return this.storage;
   }
 

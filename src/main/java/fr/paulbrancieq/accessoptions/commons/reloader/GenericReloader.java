@@ -10,7 +10,7 @@ import java.util.List;
 
 public class GenericReloader implements Reloader {
   private Runnable runnable;
-  private final Collection<Option<?>> associatedModifiedOptions = new ArrayList<>();
+  private final Collection<Option<?, ?>> associatedModifiedOptions = new ArrayList<>();
   protected final OptionsAccessHandler handler;
   private final List<Class<? extends Reloader>> parents = new ArrayList<>();
 
@@ -48,12 +48,12 @@ public class GenericReloader implements Reloader {
   }
 
   @Override
-  public Collection<Option<?>> getAssociatedModifiedOptions() {
+  public Collection<Option<?, ?>> getAssociatedModifiedOptions() {
     return associatedModifiedOptions;
   }
 
   @Override
-  public void addAssociatedModifiedOption(Option<?> option) {
+  public void addAssociatedModifiedOption(Option<?, ?> option) {
     associatedModifiedOptions.add(option);
   }
 }

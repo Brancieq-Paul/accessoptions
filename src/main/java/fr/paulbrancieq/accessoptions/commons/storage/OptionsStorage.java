@@ -10,6 +10,6 @@ public interface OptionsStorage<T> {
   @Environment(EnvType.CLIENT)
   void save();
   String getStorageId();
-  void registerOption(String id, Option<?> option);
-  Option<?> getOption(String id);
+  void registerOption(String id, Option<T, ?> option);
+  Option<T, ?> getOption(String id);
 }

@@ -15,7 +15,7 @@ public class ForceRequiresGameRestart extends GenericReloader implements AskConf
   }
 
   @Override
-  public BooleanConsumer getPromptAnswerConsumer(Option<?> option) {
+  public BooleanConsumer getPromptAnswerConsumer(Option<?, ?> option) {
     return (prompt) -> {
       if (!prompt) {
         this.handler.resetOption(option);

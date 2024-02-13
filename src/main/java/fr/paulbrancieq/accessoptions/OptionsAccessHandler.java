@@ -22,7 +22,7 @@ import java.util.*;
 public class OptionsAccessHandler {
   private static final List<StorageSupplier> availableModOptionsStoragesMap = new ArrayList<>();
   private final Map<String, OptionsStorage<?>> modOptionsStoragesMap = new HashMap<>();
-  private final List<Option<?>> modifiedOptions = new ArrayList<>();
+  private final List<Option<?, ?>> modifiedOptions = new ArrayList<>();
   private final List<OptionsStorage<?>> modifiedStorages = new ArrayList<>();
   protected final List<Reloader> reloadersFromModifiedOptions = new ArrayList<>();
   protected final List<Reloader> reloadersToRun = new ArrayList<>();
@@ -106,7 +106,7 @@ public class OptionsAccessHandler {
    * @param value  The new value for the option.
    */
   @Environment(EnvType.CLIENT)
-  public void modifyOption(Option<?> option, Object value) throws
+  public void modifyOption(Option<?, ?> option, Object value) throws
       AccessOptionsException.OptionTypeMismatch, ValueVerificationException,
       AccessOptionsException.OptionNotModified {
     option.reset();
@@ -130,7 +130,7 @@ public class OptionsAccessHandler {
     if (optionsStorage == null) {
       throw new AccessOptionsException.OptionStorageNotFound(modId);
     }
-    Option<?> option = optionsStorage.getOption(optionId);
+    Option<?, ?> option = optionsStorage.getOption(optionId);
     if (option == null) {
       throw new AccessOptionsException.OptionNotFound(modId, optionId);
     }
@@ -144,7 +144,7 @@ public class OptionsAccessHandler {
    * @param option      The option the reloader is from.
    */
   @Environment(EnvType.CLIENT)
-  private void addOneReloaderFromModifiedOption(Reloader newReloader, Option<?> option) {
+  private void addOneReloaderFromModifiedOption(Reloader newReloader, Option<?, ?> option) {
     reloadersFromModifiedOptions.stream().filter(newReloader::isSameAs).findFirst().ifPresentOrElse(
         reloaderToRun -> reloaderToRun.addAssociatedModifiedOption(option),
         () -> {
@@ -160,7 +160,7 @@ public class OptionsAccessHandler {
    * @param newReloadersToRun The reloaders to add.
    */
   @Environment(EnvType.CLIENT)
-  private void addReloadersFromModifiedOption(Collection<Reloader> newReloadersToRun, Option<?> option) {
+  private void addReloadersFromModifiedOption(Collection<Reloader> newReloadersToRun, Option<?, ?> option) {
     newReloadersToRun.forEach(reloader -> addOneReloaderFromModifiedOption(reloader, option));
   }
 
@@ -257,7 +257,7 @@ public class OptionsAccessHandler {
    * @param option The option to apply the change of.
    */
   @Environment(EnvType.CLIENT)
-  private void applyModifiedOption(Option<?> option) throws AccessOptionsException.OptionNotModified {
+  private void applyModifiedOption(Option<?, ?> option) throws AccessOptionsException.OptionNotModified {
     option.applyChanges();
     option.reset();
     if (!modifiedStorages.contains(option.getStorage())) {
@@ -289,7 +289,7 @@ public class OptionsAccessHandler {
    */
   @Environment(EnvType.CLIENT)
   private void applySaveModifiedOptionsThenRunReloaders() {
-    for (Option<?> option : modifiedOptions) {
+    for (Option<?, ?> option : modifiedOptions) {
       try {
         applyModifiedOption(option);
       } catch (AccessOptionsException.OptionNotModified e) {
@@ -329,7 +329,7 @@ public class OptionsAccessHandler {
    */
   @SuppressWarnings("unused")
   @Environment(EnvType.CLIENT)
-  public void instantModifyOption(Option<?> option, Object value) throws
+  public void instantModifyOption(Option<?, ?> option, Object value) throws
       AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.OptionNotModified {
     modifyOption(option, value);
     applyOptions();
@@ -369,7 +369,7 @@ public class OptionsAccessHandler {
    * @param option The option to reset.
    */
   @Environment(EnvType.CLIENT)
-  public void resetOption(Option<?> option) {
+  public void resetOption(Option<?, ?> option) {
     option.reset();
     modifiedOptions.remove(option);
   }
@@ -389,7 +389,7 @@ public class OptionsAccessHandler {
       if (optionsStorage == null) {
         throw new AccessOptionsException.OptionStorageNotFound(modId);
       }
-      Option<?> option = optionsStorage.getOption(optionId);
+      Option<?, ?> option = optionsStorage.getOption(optionId);
       if (option == null) {
         throw new AccessOptionsException.OptionNotFound(modId, optionId);
       }

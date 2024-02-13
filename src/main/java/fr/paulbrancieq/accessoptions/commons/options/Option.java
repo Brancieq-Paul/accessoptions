@@ -8,7 +8,7 @@ import net.minecraft.text.Text;
 
 import java.util.Collection;
 
-public interface Option<T> {
+public interface Option<S, T> {
   Text getName();
 
   @SuppressWarnings("unused")
@@ -18,7 +18,7 @@ public interface Option<T> {
 
   void reset();
 
-  OptionsStorage<?> getStorage();
+  OptionsStorage<S> getStorage();
 
   @SuppressWarnings("unused")
   boolean isAvailable();
