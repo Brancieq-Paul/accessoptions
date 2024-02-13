@@ -163,7 +163,7 @@ public class OptionImpl<S, T> implements Option<T> {
       return this;
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "UnusedReturnValue"})
     public Builder<S, T> setValueVerifier(ValueVerifier<T> valueVerifier) {
       Validate.notNull(valueVerifier, "Argument must not be null");
 
