@@ -33,6 +33,7 @@ public class GenericReloader implements Reloader {
   @Override
   public Boolean isChildOf(Reloader otherReloader) {
     // Verify if otherReloader is the parent class of this
+    // TODO add recursivity
     return parents.contains(otherReloader.getClass());
   }
 
