@@ -1,5 +1,6 @@
 package fr.paulbrancieq.accessoptions.commons.options;
 
+import fr.paulbrancieq.accessoptions.commons.exeptions.ValueVerificationException;
 import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 
 public class RangedNumberOption<S> extends RangedOption<S, Number> {
@@ -14,6 +15,11 @@ public class RangedNumberOption<S> extends RangedOption<S, Number> {
   public static class Builder<S> extends RangedOption.Builder<S, Number> {
     protected Builder(OptionsStorage<S> storage, String optionId) {
       super(storage, optionId);
+      setValueVerifier((value) -> {
+        if (!(value.doubleValue() >= min.doubleValue() && value.doubleValue() <= max.doubleValue())) {
+          throw new ValueVerificationException.ValueNotInRange(storage.getStorageId(), optionId, value, min, max);
+        }
+      });
     }
 
     @Override
