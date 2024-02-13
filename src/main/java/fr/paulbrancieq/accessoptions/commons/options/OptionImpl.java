@@ -52,7 +52,8 @@ public class OptionImpl<S, T> implements Option<T> {
 
   @Override
   @SuppressWarnings({"unchecked", "ConstantConditions"})
-  public void setValue(Object newValue) throws AccessOptionsException.OptionTypeMismatch, ValueVerificationException {
+  public void setValue(Object newValue) throws AccessOptionsException.OptionTypeMismatch, ValueVerificationException,
+      AccessOptionsException.OptionNotModified {
     if (newValue instanceof String && !value.getClass().isAssignableFrom(String.class)) {
       try {
         newValue = getValueFromString((String) newValue);
@@ -63,6 +64,9 @@ public class OptionImpl<S, T> implements Option<T> {
     if (value.getClass().isInstance(newValue)) {
       this.valueVerifier.accept((T) newValue);
       this.modifiedValue = (T) newValue;
+      if (!hasChanged()) {
+        throw new AccessOptionsException.OptionNotModified(this.storage.getStorageId(), this.optionId);
+      }
     } else {
       throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
     }

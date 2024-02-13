@@ -107,7 +107,8 @@ public class OptionsAccessHandler {
    */
   @Environment(EnvType.CLIENT)
   public void modifyOption(Option<?> option, Object value) throws
-      AccessOptionsException.OptionTypeMismatch, ValueVerificationException {
+      AccessOptionsException.OptionTypeMismatch, ValueVerificationException,
+      AccessOptionsException.OptionNotModified {
     option.reset();
     option.setValue(value);
     modifiedOptions.add(option);
@@ -124,7 +125,7 @@ public class OptionsAccessHandler {
   @Environment(EnvType.CLIENT)
   public void modifyOption(String modId, String optionId, Object value) throws
       AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.OptionNotFound,
-      AccessOptionsException.OptionStorageNotFound {
+      AccessOptionsException.OptionStorageNotFound, AccessOptionsException.OptionNotModified {
     OptionsStorage<?> optionsStorage = getOptionsStorage(modId);
     if (optionsStorage == null) {
       throw new AccessOptionsException.OptionStorageNotFound(modId);
@@ -329,7 +330,7 @@ public class OptionsAccessHandler {
   @SuppressWarnings("unused")
   @Environment(EnvType.CLIENT)
   public void instantModifyOption(Option<?> option, Object value) throws
-      AccessOptionsException.OptionTypeMismatch, ValueVerificationException {
+      AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.OptionNotModified {
     modifyOption(option, value);
     applyOptions();
   }
@@ -345,7 +346,7 @@ public class OptionsAccessHandler {
   @Environment(EnvType.CLIENT)
   public void instantModifyOption(String modId, String optionId, Object value) throws
       AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.OptionNotFound,
-      AccessOptionsException.OptionStorageNotFound {
+      AccessOptionsException.OptionStorageNotFound, AccessOptionsException.OptionNotModified {
     modifyOption(modId, optionId, value);
     applyOptions();
   }

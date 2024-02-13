@@ -14,7 +14,7 @@ public interface Option<T> {
   @SuppressWarnings("unused")
   T getValue();
 
-  void setValue(Object value) throws AccessOptionsException.OptionTypeMismatch, ValueVerificationException;
+  void setValue(Object value) throws AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.OptionNotModified;
 
   void reset();
 
