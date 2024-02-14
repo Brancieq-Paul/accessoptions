@@ -40,6 +40,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     this.valueVerifier = builder.valueVerifier;
     this.reloaders = List.copyOf(builder.reloaders);
     this.enabled = builder.enabled;
+    reset();
   }
 
   @Override
