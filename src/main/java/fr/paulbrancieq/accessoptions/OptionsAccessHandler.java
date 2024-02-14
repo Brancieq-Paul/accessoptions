@@ -109,7 +109,6 @@ public class OptionsAccessHandler {
   public void modifyOption(Option<?, ?> option, Object value) throws
       AccessOptionsException.OptionTypeMismatch, ValueVerificationException,
       AccessOptionsException.OptionNotModified {
-    option.reset();
     option.setValue(value);
     modifiedOptions.add(option);
   }
