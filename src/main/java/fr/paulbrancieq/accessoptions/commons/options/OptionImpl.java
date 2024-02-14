@@ -76,10 +76,10 @@ public class OptionImpl<S, T> implements Option<S, T> {
     }
     if (value.getClass().isInstance(newValue)) {
       this.valueVerifier.accept((T) newValue);
-      this.modifiedValue = (T) newValue;
-      if (!hasChanged()) {
+      if (newValue.equals(this.modifiedValue)) {
         throw new AccessOptionsException.OptionNotModified(this.storage.getStorageId(), this.optionId);
       }
+      this.modifiedValue = (T) newValue;
     } else {
       throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
     }
