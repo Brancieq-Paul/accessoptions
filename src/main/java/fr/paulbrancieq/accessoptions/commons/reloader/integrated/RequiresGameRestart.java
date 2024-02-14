@@ -19,7 +19,7 @@ public class RequiresGameRestart extends GenericReloader implements AskConfirmat
   public BooleanConsumer getPromptAnswerConsumer(Option<?, ?> option) {
     return (prompt) -> {
       if (!prompt) {
-        AccessOptions.getLogger().warn("User refused to restart the game, changes to " + option.getName() +
+        AccessOptions.getLogger().warn("User refused to restart the game, changes to " + option.getDisplayName() +
             " from " + option.getStorage().getStorageId() + " storage will not be effective until the game is restarted.");
       }
     };

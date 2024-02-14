@@ -19,7 +19,7 @@ public class ForceRequiresGameRestart extends GenericReloader implements AskConf
     return (prompt) -> {
       if (!prompt) {
         this.handler.resetOption(option);
-        AccessOptions.getLogger().warn("User refused to restart the game, changes to " + option.getName() +
+        AccessOptions.getLogger().warn("User refused to restart the game, changes to " + option.getDisplayName() +
             " from " + option.getStorage().getStorageId() + " storage will not be applied.");
       }
     };

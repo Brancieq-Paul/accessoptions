@@ -9,8 +9,11 @@ import net.minecraft.text.Text;
 import java.util.Collection;
 
 public interface Option<S, T> {
-  Text getName();
-
+  Text getDisplayName();
+  @SuppressWarnings("unused")
+  String getId();
+  @SuppressWarnings("unused")
+  String getDescription();
   @SuppressWarnings("unused")
   T getValue();
 

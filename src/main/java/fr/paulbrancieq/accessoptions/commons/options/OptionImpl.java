@@ -23,6 +23,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
   protected final List<Reloader> reloaders;
   protected final Text name;
   protected final String optionId;
+  protected final String description;
   protected T value;
   protected T modifiedValue;
   protected final boolean enabled;
@@ -32,6 +33,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     Validate.notNull(builder.binding, "Option binding must be specified");
     this.storage = builder.storage;
     this.name = builder.name;
+    this.description = builder.description == null ? builder.name.getString() : builder.description;
     this.optionId = builder.optionId;
     this.binding = builder.binding;
     this.valueFromString = builder.valueFromString;
@@ -41,8 +43,18 @@ public class OptionImpl<S, T> implements Option<S, T> {
   }
 
   @Override
-  public Text getName() {
+  public Text getDisplayName() {
     return this.name;
+  }
+
+  @Override
+  public String getId() {
+    return this.optionId;
+  }
+
+  @Override
+  public String getDescription() {
+    return "";
   }
 
   @Override
@@ -119,6 +131,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     protected final OptionsStorage<S> storage;
     protected final String optionId;
     protected Text name;
+    protected String description;
     protected OptionBinding<S, T> binding;
     @SuppressWarnings("unchecked")
     protected Function<String, T> valueFromString = (value) -> (T) value;
@@ -136,6 +149,15 @@ public class OptionImpl<S, T> implements Option<S, T> {
       Validate.notNull(name, "Argument must not be null");
 
       this.name = name;
+
+      return this;
+    }
+
+    @SuppressWarnings("unused")
+    public Builder<S, T> setDescription(String description) {
+      Validate.notNull(description, "Argument must not be null");
+
+      this.description = description;
 
       return this;
     }
