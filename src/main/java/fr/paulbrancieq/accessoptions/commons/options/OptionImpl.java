@@ -25,7 +25,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
   protected final String optionId;
   protected final String description;
   protected T value;
-  protected T modifiedValue;
+  protected T pendingValue;
   protected final boolean enabled;
 
   protected OptionImpl(Builder<S, T> builder) {
@@ -59,40 +59,45 @@ public class OptionImpl<S, T> implements Option<S, T> {
   }
 
   @Override
-  public T getValue() {
-    return this.modifiedValue;
+  public T getPendingValue() {
+    return this.pendingValue;
+  }
+
+  @Override
+  public T getOriginalValue() {
+    return this.value;
   }
 
   @Override
   @SuppressWarnings({"unchecked", "ConstantConditions"})
-  public void setValue(Object newValue) throws AccessOptionsException.OptionTypeMismatch, ValueVerificationException,
-      AccessOptionsException.OptionNotModified {
+  public void modifyPendingValue(Object newValue) throws AccessOptionsException.OptionTypeMismatch, ValueVerificationException,
+      AccessOptionsException.PendingOptionNotDifferent {
     if (newValue instanceof String && !value.getClass().isAssignableFrom(String.class)) {
       try {
-        newValue = getValueFromString((String) newValue);
+        newValue = valueFromString((String) newValue);
       } catch (Exception e) {
         throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
       }
     }
     if (value.getClass().isInstance(newValue)) {
       this.valueVerifier.accept((T) newValue);
-      if (newValue.equals(this.modifiedValue)) {
-        throw new AccessOptionsException.OptionNotModified(this.storage.getStorageId(), this.optionId);
+      if (newValue.equals(this.pendingValue)) {
+        throw new AccessOptionsException.PendingOptionNotDifferent(this.storage.getStorageId(), this.optionId);
       }
-      this.modifiedValue = (T) newValue;
+      this.pendingValue = (T) newValue;
     } else {
       throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
     }
   }
 
-  protected T getValueFromString(String newValue) {
+  protected T valueFromString(String newValue) {
     return valueFromString.apply(newValue);
   }
 
   @Override
   public void reset() {
     this.value = this.binding.getValue(this.storage.getData());
-    this.modifiedValue = this.value;
+    this.pendingValue = this.value;
   }
 
   @Override
@@ -107,16 +112,16 @@ public class OptionImpl<S, T> implements Option<S, T> {
 
   @Override
   public boolean hasChanged() {
-    return !this.value.equals(this.modifiedValue);
+    return !this.value.equals(this.pendingValue);
   }
 
   @Override
-  public void applyChanges() throws AccessOptionsException.OptionNotModified {
+  public void applyPendingValue() throws AccessOptionsException.PendingOptionNotDifferent {
     if (!this.hasChanged()) {
-      throw new AccessOptionsException.OptionNotModified(this.storage.getStorageId(), this.optionId);
+      throw new AccessOptionsException.PendingOptionNotDifferent(this.storage.getStorageId(), this.optionId);
     }
-    this.binding.setValue(this.storage.getData(), this.modifiedValue);
-    this.value = this.modifiedValue;
+    this.binding.setValue(this.storage.getData(), this.pendingValue);
+    this.value = this.pendingValue;
   }
 
   @Override

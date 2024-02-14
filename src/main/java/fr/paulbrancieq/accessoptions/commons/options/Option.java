@@ -15,20 +15,15 @@ public interface Option<S, T> {
   @SuppressWarnings("unused")
   String getDescription();
   @SuppressWarnings("unused")
-  T getValue();
-
-  void setValue(Object value) throws AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.OptionNotModified;
-
+  T getPendingValue();
+  @SuppressWarnings("unused")
+  T getOriginalValue();
+  void modifyPendingValue(Object value) throws AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.PendingOptionNotDifferent;
   void reset();
-
   OptionsStorage<S> getStorage();
-
   @SuppressWarnings("unused")
   boolean isAvailable();
-
   boolean hasChanged();
-
-  void applyChanges() throws AccessOptionsException.OptionNotModified;
-
+  void applyPendingValue() throws AccessOptionsException.PendingOptionNotDifferent;
   Collection<Reloader> getReloaders();
 }

@@ -13,8 +13,8 @@ public class AccessOptionsException extends Exception {
     }
   }
 
-  public static class OptionNotModified extends AccessOptionsException {
-    public OptionNotModified(String storageId, String optionId) {
+  public static class PendingOptionNotDifferent extends AccessOptionsException {
+    public PendingOptionNotDifferent(String storageId, String optionId) {
       super("Option is already set to the applied value for storage \"" + storageId + "\" and option id \"" +
           optionId + "\".");
     }

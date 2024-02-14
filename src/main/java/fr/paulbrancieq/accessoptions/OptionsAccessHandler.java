@@ -108,8 +108,8 @@ public class OptionsAccessHandler {
   @Environment(EnvType.CLIENT)
   public void modifyOption(Option<?, ?> option, Object value) throws
       AccessOptionsException.OptionTypeMismatch, ValueVerificationException,
-      AccessOptionsException.OptionNotModified {
-    option.setValue(value);
+      AccessOptionsException.PendingOptionNotDifferent {
+    option.modifyPendingValue(value);
     modifiedOptions.add(option);
   }
 
@@ -124,7 +124,7 @@ public class OptionsAccessHandler {
   @Environment(EnvType.CLIENT)
   public void modifyOption(String modId, String optionId, Object value) throws
       AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.OptionNotFound,
-      AccessOptionsException.OptionStorageNotFound, AccessOptionsException.OptionNotModified {
+      AccessOptionsException.OptionStorageNotFound, AccessOptionsException.PendingOptionNotDifferent {
     OptionsStorage<?> optionsStorage = getOptionsStorage(modId);
     if (optionsStorage == null) {
       throw new AccessOptionsException.OptionStorageNotFound(modId);
@@ -256,8 +256,8 @@ public class OptionsAccessHandler {
    * @param option The option to apply the change of.
    */
   @Environment(EnvType.CLIENT)
-  private void applyModifiedOption(Option<?, ?> option) throws AccessOptionsException.OptionNotModified {
-    option.applyChanges();
+  private void applyModifiedOption(Option<?, ?> option) throws AccessOptionsException.PendingOptionNotDifferent {
+    option.applyPendingValue();
     option.reset();
     if (!modifiedStorages.contains(option.getStorage())) {
       modifiedStorages.add(option.getStorage());
@@ -284,20 +284,43 @@ public class OptionsAccessHandler {
   }
 
   /**
+   * Filters the reloaders to run to only keep the ones that are in the filter.
+   *
+   * @param filter The list of reloaders to keep.
+   */
+  @Environment(EnvType.CLIENT)
+  private void filterReloadersToRun(List<Reloader> filter)
+  {
+    reloadersToRun.removeIf(reloader -> filter.stream().noneMatch(reloader::isSameAs));
+  }
+
+  @Environment(EnvType.CLIENT)
+  private void filterStoragesToSave(List<OptionsStorage<?>> filter)
+  {
+    modifiedStorages.removeIf(storage -> filter.stream().noneMatch(storage::equals));
+  }
+
+  /**
    * Applies the changes of the modified options and saves the modified storages, then runs the reloaders.
    */
   @Environment(EnvType.CLIENT)
   private void applySaveModifiedOptionsThenRunReloaders() {
+    List<Reloader> tempReloadersToRun = new ArrayList<>(reloadersToRun);
+    List<OptionsStorage<?>> tempModifiedStorages = new ArrayList<>(modifiedStorages);
     for (Option<?, ?> option : modifiedOptions) {
       try {
         applyModifiedOption(option);
-      } catch (AccessOptionsException.OptionNotModified e) {
+        tempReloadersToRun.addAll(option.getReloaders());
+        tempModifiedStorages.add(option.getStorage());
+      } catch (AccessOptionsException.PendingOptionNotDifferent e) {
         if (!ignoreOptionNotModified) {
           sendFeedback(e.getMessage());
         }
       }
     }
+    filterStoragesToSave(tempModifiedStorages);
     modifiedStorages.forEach(OptionsStorage::save);
+    filterReloadersToRun(tempReloadersToRun);
     runReloaders();
     sendFeedback("Options applied and saved.");
     modifiedOptions.clear();
@@ -329,7 +352,7 @@ public class OptionsAccessHandler {
   @SuppressWarnings("unused")
   @Environment(EnvType.CLIENT)
   public void instantModifyOption(Option<?, ?> option, Object value) throws
-      AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.OptionNotModified {
+      AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.PendingOptionNotDifferent {
     modifyOption(option, value);
     applyOptions();
   }
@@ -345,7 +368,7 @@ public class OptionsAccessHandler {
   @Environment(EnvType.CLIENT)
   public void instantModifyOption(String modId, String optionId, Object value) throws
       AccessOptionsException.OptionTypeMismatch, ValueVerificationException, AccessOptionsException.OptionNotFound,
-      AccessOptionsException.OptionStorageNotFound, AccessOptionsException.OptionNotModified {
+      AccessOptionsException.OptionStorageNotFound, AccessOptionsException.PendingOptionNotDifferent {
     modifyOption(modId, optionId, value);
     applyOptions();
   }
