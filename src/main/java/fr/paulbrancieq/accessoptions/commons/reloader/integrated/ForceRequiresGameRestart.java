@@ -10,10 +10,18 @@ import net.minecraft.text.Text;
 
 public class ForceRequiresGameRestart extends GenericReloader implements AskConfirmation {
 
+  /**
+   * Create an empty instance. Used for internal purposes.
+   * All reloaders should at least have this empty constructor.
+   */
+  @SuppressWarnings("unused")
+  public ForceRequiresGameRestart() {
+    super();
+  }
+  @SuppressWarnings("unused")
   public ForceRequiresGameRestart(OptionsAccessHandler handler) {
     super(() -> handler.setRestartNeeded(true), handler);
   }
-
   @Override
   public BooleanConsumer getPromptAnswerConsumer(Option<?, ?> option) {
     return (prompt) -> {
@@ -24,7 +32,6 @@ public class ForceRequiresGameRestart extends GenericReloader implements AskConf
       }
     };
   }
-
   @Override
   public Text getName() {
     return Text.of("Requires immediate game restart");
