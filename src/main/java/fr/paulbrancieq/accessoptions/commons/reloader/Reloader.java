@@ -1,5 +1,6 @@
 package fr.paulbrancieq.accessoptions.commons.reloader;
 
+import fr.paulbrancieq.accessoptions.commons.exeptions.AccessOptionsException;
 import fr.paulbrancieq.accessoptions.commons.options.Option;
 
 import java.util.Collection;
@@ -11,7 +12,7 @@ public interface Reloader {
   Boolean isSameAs(Reloader reloader);
   Collection<Option<?, ?>> getAssociatedModifiedOptions();
   void addAssociatedModifiedOption(Option<?, ?> option);
-  List<Class<? extends Reloader>> getParents();
-  List<Class<? extends Reloader>> getParents(List<Class<? extends Reloader>> passedReloaderClasses);
+  List<Class<? extends Reloader>> getParents() throws AccessOptionsException.ReloaderParentingLoop;
+  List<Class<? extends Reloader>> getParents(List<Class<? extends Reloader>> passedReloaderClasses) throws AccessOptionsException.ReloaderParentingLoop;
   List<Class<? extends Reloader>> getDirectParents();
 }

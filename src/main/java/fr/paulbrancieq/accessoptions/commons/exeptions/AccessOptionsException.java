@@ -1,5 +1,9 @@
 package fr.paulbrancieq.accessoptions.commons.exeptions;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 public class AccessOptionsException extends Exception {
 
   public AccessOptionsException(String message) {
@@ -29,6 +33,29 @@ public class AccessOptionsException extends Exception {
   public static class OptionStorageNotFound extends AccessOptionsException {
     public OptionStorageNotFound(String storageId) {
       super("Option storage not found for storage \"" + storageId + "\".");
+    }
+  }
+
+  public static class ReloaderParentingLoop extends AccessOptionsException {
+    List<String> parentOfNext;
+    static Function<List<String>, String> parentOfNextString = parentOfNext -> {
+      StringBuilder parentOfNextString = new StringBuilder();
+      for (String parent : parentOfNext) {
+        parentOfNextString.append(parent).append(" parent of ");
+      }
+      return parentOfNextString.toString();
+    };
+    public ReloaderParentingLoop(String reloaderName) {
+      super("Reloader parenting loop detected: " + reloaderName + ".");
+      this.parentOfNext = new ArrayList<>() {{
+        add(reloaderName);
+      }};
+    }
+    public ReloaderParentingLoop(String reloaderName, ReloaderParentingLoop parentOfNext) {
+      super("Reloader parenting loop detected: " + parentOfNextString.apply(parentOfNext.parentOfNext) + reloaderName + ".");
+      this.parentOfNext = new ArrayList<>(parentOfNext.parentOfNext) {{
+        add(reloaderName);
+      }};
     }
   }
 }

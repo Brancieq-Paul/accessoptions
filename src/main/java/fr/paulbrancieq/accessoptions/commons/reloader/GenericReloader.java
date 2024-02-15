@@ -1,6 +1,7 @@
 package fr.paulbrancieq.accessoptions.commons.reloader;
 
 import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
+import fr.paulbrancieq.accessoptions.commons.exeptions.AccessOptionsException;
 import fr.paulbrancieq.accessoptions.commons.options.Option;
 
 import java.lang.reflect.InvocationTargetException;
@@ -30,7 +31,11 @@ public class GenericReloader implements Reloader {
   }
   @Override
   public Boolean isChildOf(Reloader otherReloader) {
-    return getParents().stream().noneMatch(parent -> parent == otherReloader.getClass());
+    try {
+      return getParents().stream().noneMatch(parent -> parent == otherReloader.getClass());
+    } catch (AccessOptionsException.ReloaderParentingLoop e) {
+      throw new RuntimeException(e);
+    }
   }
   @Override
   public Boolean isSameAs(Reloader otherReloader) {
@@ -41,24 +46,27 @@ public class GenericReloader implements Reloader {
     return new ArrayList<>();
   }
   @Override
-  public List<Class<? extends Reloader>> getParents() {
+  public List<Class<? extends Reloader>> getParents() throws AccessOptionsException.ReloaderParentingLoop {
     List<Class<? extends Reloader>> passedReloadersClass = new ArrayList<>();
     return getParents(passedReloadersClass);
   }
   @Override
-  public List<Class<? extends Reloader>> getParents(List<Class<? extends Reloader>> passedReloaderClasses) {
+  public List<Class<? extends Reloader>> getParents(List<Class<? extends Reloader>> passedReloaderClasses)
+      throws AccessOptionsException.ReloaderParentingLoop {
     if (passedReloaderClasses.contains(this.getClass())) {
-      throw new IllegalStateException("Circular dependency detected");
+      throw new AccessOptionsException.ReloaderParentingLoop(this.getClass().getSimpleName());
     }
     passedReloaderClasses.add(this.getClass());
     List<Class<? extends Reloader>> parents = new ArrayList<>(getDirectParents());
-    getDirectParents().forEach(parent -> {
+    for (Class<? extends Reloader> parent : parents) {
       try {
         parents.addAll(parent.getDeclaredConstructor().newInstance().getParents(passedReloaderClasses));
       } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
         throw new RuntimeException("Error while getting parents of reloader " + this.getClass().getName(), e);
+      } catch (AccessOptionsException.ReloaderParentingLoop e) {
+        throw new AccessOptionsException.ReloaderParentingLoop(this.getClass().getSimpleName(), e);
       }
-    });
+    }
     return parents;
   }
 
