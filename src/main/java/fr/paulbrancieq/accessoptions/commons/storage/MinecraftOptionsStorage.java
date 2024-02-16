@@ -3,7 +3,7 @@ package fr.paulbrancieq.accessoptions.commons.storage;
 import fr.paulbrancieq.accessoptions.AccessOptions;
 import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
-import fr.paulbrancieq.accessoptions.commons.options.RangedNumberOption;
+import fr.paulbrancieq.accessoptions.commons.options.typed.RangedNumberOption;
 import fr.paulbrancieq.accessoptions.commons.reloader.integrated.RequiresRendererReload;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -256,11 +256,11 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
         .build());
     this.registerOption("fov", RangedNumberOption.createBuilder(this,
             "fov")
-        .setRange(30, 110)
         .setName(Text.translatable("options.fov"))
         .setBinding((options, value) -> options.getFov().setValue((Integer)value),
             options -> options.getFov().getValue())
         .setValueFromString(Integer::parseInt)
+        .setRange(30, 110)
         .build());
     this.registerOption("screenEffectScale", OptionImpl.createBuilder(Double.class, this,
             "screenEffectScale")

@@ -1,5 +1,6 @@
-package fr.paulbrancieq.accessoptions.commons.options;
+package fr.paulbrancieq.accessoptions.commons.options.typed;
 
+import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
 import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 
 public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ranged<T> {
@@ -7,7 +8,7 @@ public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ran
   protected final T min;
   protected final T max;
 
-  protected RangedOption(Builder<S, T> builder) {
+  protected RangedOption(Builder<S, T, ?> builder) {
     super(builder);
     this.min = builder.min;
     this.max = builder.max;
@@ -25,7 +26,7 @@ public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ran
     return max;
   }
 
-  public static class Builder<S, T> extends OptionImpl.Builder<S, T> {
+  public static class Builder<S, T, U extends Builder<S, T, ?>> extends OptionImpl.Builder<S, T, Builder<S, T, ?>> {
     protected T min;
     protected T max;
 
@@ -33,10 +34,16 @@ public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ran
       super(storage, optionId);
     }
 
-    public Builder<S, T> setRange(T min, T max) {
+    @SuppressWarnings({"unchecked"})
+    public U setRange(T min, T max) {
       this.min = min;
       this.max = max;
-      return this;
+      return (U) this;
+    }
+
+    @Override
+    public RangedOption<S, T> build() {
+      throw new UnsupportedOperationException("Non implemented for abstract RangedOption.");
     }
   }
 }

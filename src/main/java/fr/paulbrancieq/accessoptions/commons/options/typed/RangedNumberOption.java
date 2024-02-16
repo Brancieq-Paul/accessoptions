@@ -1,4 +1,4 @@
-package fr.paulbrancieq.accessoptions.commons.options;
+package fr.paulbrancieq.accessoptions.commons.options.typed;
 
 import fr.paulbrancieq.accessoptions.commons.exeptions.ValueVerificationException;
 import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
@@ -12,7 +12,7 @@ public class RangedNumberOption<S> extends RangedOption<S, Number> {
     return new Builder<>(storage, optionId);
   }
 
-  public static class Builder<S> extends RangedOption.Builder<S, Number> {
+  public static class Builder<S> extends RangedOption.Builder<S, Number, Builder<S>> {
     protected Builder(OptionsStorage<S> storage, String optionId) {
       super(storage, optionId);
       setValueVerifier((value) -> {

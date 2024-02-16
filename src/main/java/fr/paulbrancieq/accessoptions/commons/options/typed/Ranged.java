@@ -1,4 +1,4 @@
-package fr.paulbrancieq.accessoptions.commons.options;
+package fr.paulbrancieq.accessoptions.commons.options.typed;
 
 public interface Ranged<T> {
   @SuppressWarnings("unused")

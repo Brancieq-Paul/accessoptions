@@ -28,7 +28,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
   protected T pendingValue;
   protected final boolean enabled;
 
-  protected OptionImpl(Builder<S, T> builder) {
+  protected OptionImpl(Builder<S, T, ?> builder) {
     Validate.notNull(builder.name, "Name must be specified");
     Validate.notNull(builder.binding, "Option binding must be specified");
     this.storage = builder.storage;
@@ -129,11 +129,12 @@ public class OptionImpl<S, T> implements Option<S, T> {
     return this.reloaders;
   }
 
-  public static <S, T> Builder<S, T> createBuilder(@SuppressWarnings("unused") Class<T> type, OptionsStorage<S> storage, String optionId) {
+  public static <S, T> Builder<S, T, ?> createBuilder(@SuppressWarnings("unused") Class<T> type, OptionsStorage<S> storage, String optionId) {
     return new Builder<>(storage, optionId);
   }
 
-  public static class Builder<S, T> {
+  @SuppressWarnings({"unchecked"})
+  public static class Builder<S, T, U extends Builder<S, T, ?>> {
     protected final OptionsStorage<S> storage;
     protected final String optionId;
     protected Text name;
@@ -151,72 +152,72 @@ public class OptionImpl<S, T> implements Option<S, T> {
       this.optionId = optionId;
     }
 
-    public Builder<S, T> setName(Text name) {
+    public U setName(Text name) {
       Validate.notNull(name, "Argument must not be null");
 
       this.name = name;
 
-      return this;
+      return (U) this;
     }
 
     @SuppressWarnings("unused")
-    public Builder<S, T> setDescription(String description) {
+    public U setDescription(String description) {
       Validate.notNull(description, "Argument must not be null");
 
       this.description = description;
 
-      return this;
+      return (U) this;
     }
 
-    public Builder<S, T> setBinding(BiConsumer<S, T> setter, Function<S, T> getter) {
+    public U setBinding(BiConsumer<S, T> setter, Function<S, T> getter) {
       Validate.notNull(setter, "Setter must not be null");
       Validate.notNull(getter, "Getter must not be null");
 
       this.binding = new GenericBinding<>(setter, getter);
 
-      return this;
+      return (U) this;
     }
 
 
     @SuppressWarnings("unused")
-    public Builder<S, T> setBinding(OptionBinding<S, T> binding) {
+    public U setBinding(OptionBinding<S, T> binding) {
       Validate.notNull(binding, "Argument must not be null");
 
       this.binding = binding;
 
-      return this;
+      return (U) this;
     }
 
-    public Builder<S, T> setValueFromString(Function<String, T> valueFromString) {
+    public U setValueFromString(Function<String, T> valueFromString) {
       Validate.notNull(valueFromString, "Argument must not be null");
 
       this.valueFromString = valueFromString;
 
-      return this;
+      return (U) this;
     }
 
     @SuppressWarnings({"unused", "UnusedReturnValue"})
-    public Builder<S, T> setValueVerifier(ValueVerifier<T> valueVerifier) {
+    public U setValueVerifier(ValueVerifier<T> valueVerifier) {
       Validate.notNull(valueVerifier, "Argument must not be null");
 
       this.valueVerifier = valueVerifier;
 
-      return this;
+      return (U) this;
     }
 
-    public Builder<S, T> setReloaders(Reloader... reloaders) {
+    public U setReloaders(Reloader... reloaders) {
       Validate.notNull(reloaders, "Argument must not be null");
 
       this.reloaders.addAll(List.of(reloaders));
 
-      return this;
+      return (U) this;
     }
 
     @SuppressWarnings("unused")
-    public Builder<S, T> setEnabled(boolean value) {
+    public U setEnabled(boolean value) {
       this.enabled = value;
 
-      return this;
+      return (U) this;
     }
 
     @SuppressWarnings("UnusedReturnValue")
