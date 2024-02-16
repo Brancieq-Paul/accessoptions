@@ -2,6 +2,7 @@ name: Repo and documentation issue
 description: File an issue/request with the repository or documentation
 title: "[Repo/Docs]: "
 labels: [ "repository", "documentation", "triage" ]
+projects: [ "Brancieq-Paul/projects/2" ]
 body:
   - type: markdown
     attributes:
