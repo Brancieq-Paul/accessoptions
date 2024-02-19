@@ -4,7 +4,7 @@ import fr.paulbrancieq.accessoptions.AccessOptions;
 import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
 import fr.paulbrancieq.accessoptions.commons.options.ModificationInputTransformer;
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
-import fr.paulbrancieq.accessoptions.commons.options.typed.RangedNumberOption;
+import fr.paulbrancieq.accessoptions.commons.options.typed.RangedIntOption;
 import fr.paulbrancieq.accessoptions.commons.reloader.integrated.RequiresRendererReload;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -255,10 +255,10 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
             options -> options.getMouseSensitivity().getValue())
         .setInputToValueTransformers(doubleStringConsumer)
         .build());
-    this.registerOption("fov", RangedNumberOption.createBuilder(this,
+    this.registerOption("fov", RangedIntOption.createBuilder(this,
             "fov")
         .setName(Text.translatable("options.fov"))
-        .setBinding((options, value) -> options.getFov().setValue((Integer)value),
+        .setBinding((options, value) -> options.getFov().setValue(value),
             options -> options.getFov().getValue())
         .setInputToValueTransformers(integerStringConsumer)
         .setRange(30, 110)
