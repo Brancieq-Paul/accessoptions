@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 public class OptionImpl<S, T> implements Option<S, T> {
   protected final OptionsStorage<S> storage;
-  protected final Function<String, T> valueFromString;
+  protected final List<ModificationInputTransformer<?, ? extends T>> inputToValueTransformers;
   protected final ValueVerifier<T> valueVerifier;
   protected final OptionBinding<S, T> binding;
   protected final List<Reloader> reloaders;
@@ -36,7 +36,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     this.description = builder.description == null ? builder.name.getString() : builder.description;
     this.optionId = builder.optionId;
     this.binding = builder.binding;
-    this.valueFromString = builder.valueFromString;
+    this.inputToValueTransformers = List.copyOf(builder.inputToValueTransformers);
     this.valueVerifier = builder.valueVerifier;
     this.reloaders = List.copyOf(builder.reloaders);
     this.enabled = builder.enabled;
@@ -68,15 +68,22 @@ public class OptionImpl<S, T> implements Option<S, T> {
     return this.value;
   }
 
+  private <Y> Object applyTransformer(ModificationInputTransformer<Y, ? extends T> transformer, Object newValue) throws Exception {
+    if (transformer.getInputType().isInstance(newValue)) {
+      return transformer.apply(transformer.getInputType().cast(newValue));
+    }
+    return newValue;
+  }
+
   @Override
   @SuppressWarnings({"unchecked", "ConstantConditions"})
   public void modifyPendingValue(Object newValue) throws AccessOptionsException.OptionTypeMismatch, ValueVerificationException,
       AccessOptionsException.PendingOptionNotDifferent {
-    if (newValue instanceof String && !value.getClass().isAssignableFrom(String.class)) {
+    for (ModificationInputTransformer<?, ? extends T> transformer : this.inputToValueTransformers) {
       try {
-        newValue = valueFromString((String) newValue);
-      } catch (Exception e) {
-        throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
+        newValue = applyTransformer(transformer, newValue);
+        break;
+      } catch (Exception ignored) {
       }
     }
     if (value.getClass().isInstance(newValue)) {
@@ -88,10 +95,6 @@ public class OptionImpl<S, T> implements Option<S, T> {
     } else {
       throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
     }
-  }
-
-  protected T valueFromString(String newValue) {
-    return valueFromString.apply(newValue);
   }
 
   @Override
@@ -140,8 +143,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     protected Text name;
     protected String description;
     protected OptionBinding<S, T> binding;
-    @SuppressWarnings("unchecked")
-    protected Function<String, T> valueFromString = (value) -> (T) value;
+    protected List<ModificationInputTransformer<?, ? extends T>> inputToValueTransformers = new ArrayList<>();
     protected ValueVerifier<T> valueVerifier = (value) -> {
     };
     protected final List<Reloader> reloaders = new ArrayList<>();
@@ -152,7 +154,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
       this.optionId = optionId;
     }
 
-    public U setName(Text name) {
+    public final U setName(Text name) {
       Validate.notNull(name, "Argument must not be null");
 
       this.name = name;
@@ -161,7 +163,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     }
 
     @SuppressWarnings("unused")
-    public U setDescription(String description) {
+    public final U setDescription(String description) {
       Validate.notNull(description, "Argument must not be null");
 
       this.description = description;
@@ -169,7 +171,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
       return (U) this;
     }
 
-    public U setBinding(BiConsumer<S, T> setter, Function<S, T> getter) {
+    public final U setBinding(BiConsumer<S, T> setter, Function<S, T> getter) {
       Validate.notNull(setter, "Setter must not be null");
       Validate.notNull(getter, "Getter must not be null");
 
@@ -180,7 +182,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
 
 
     @SuppressWarnings("unused")
-    public U setBinding(OptionBinding<S, T> binding) {
+    public final U setBinding(OptionBinding<S, T> binding) {
       Validate.notNull(binding, "Argument must not be null");
 
       this.binding = binding;
@@ -188,16 +190,22 @@ public class OptionImpl<S, T> implements Option<S, T> {
       return (U) this;
     }
 
-    public U setValueFromString(Function<String, T> valueFromString) {
-      Validate.notNull(valueFromString, "Argument must not be null");
+    @SafeVarargs
+    @SuppressWarnings("UnusedReturnValue")
+    public final U setInputToValueTransformers(ModificationInputTransformer<?, ? extends T>... transformers) {
+      Validate.notNull(transformers, "Argument must not be null");
 
-      this.valueFromString = valueFromString;
+      for (ModificationInputTransformer<?, ? extends T> transformer : transformers) {
+        Validate.notNull(transformer, "Argument must not be null");
+      }
+
+      this.inputToValueTransformers.addAll(List.of(transformers));
 
       return (U) this;
     }
 
     @SuppressWarnings({"unused", "UnusedReturnValue"})
-    public U setValueVerifier(ValueVerifier<T> valueVerifier) {
+    public final U setValueVerifier(ValueVerifier<T> valueVerifier) {
       Validate.notNull(valueVerifier, "Argument must not be null");
 
       this.valueVerifier = valueVerifier;
@@ -205,7 +213,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
       return (U) this;
     }
 
-    public U setReloaders(Reloader... reloaders) {
+    public final U setReloaders(Reloader... reloaders) {
       Validate.notNull(reloaders, "Argument must not be null");
 
       this.reloaders.addAll(List.of(reloaders));
@@ -214,7 +222,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     }
 
     @SuppressWarnings("unused")
-    public U setEnabled(boolean value) {
+    public final U setEnabled(boolean value) {
       this.enabled = value;
 
       return (U) this;

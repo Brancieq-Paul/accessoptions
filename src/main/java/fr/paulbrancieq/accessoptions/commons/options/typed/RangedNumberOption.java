@@ -3,6 +3,8 @@ package fr.paulbrancieq.accessoptions.commons.options.typed;
 import fr.paulbrancieq.accessoptions.commons.exeptions.ValueVerificationException;
 import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 
+import java.text.NumberFormat;
+
 public class RangedNumberOption<S> extends RangedOption<S, Number> {
   public RangedNumberOption(Builder<S> builder) {
     super(builder);
@@ -24,6 +26,13 @@ public class RangedNumberOption<S> extends RangedOption<S, Number> {
 
     @Override
     public RangedNumberOption<S> build() {
+      super.setInputToValueTransformers((input) -> {
+        if (input instanceof Number) {
+          return (Number) input;
+        } else {
+          return NumberFormat.getInstance().parse(input.toString());
+        }
+      });
       return new RangedNumberOption<>(this);
     }
   }
