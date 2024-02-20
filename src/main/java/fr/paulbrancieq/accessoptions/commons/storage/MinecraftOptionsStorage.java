@@ -4,6 +4,7 @@ import fr.paulbrancieq.accessoptions.AccessOptions;
 import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
 import fr.paulbrancieq.accessoptions.commons.options.ModificationInputTransformer;
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
+import fr.paulbrancieq.accessoptions.commons.options.typed.BooleanOption;
 import fr.paulbrancieq.accessoptions.commons.options.typed.RangedIntOption;
 import fr.paulbrancieq.accessoptions.commons.reloader.integrated.RequiresRendererReload;
 import net.fabricmc.api.EnvType;
@@ -18,7 +19,6 @@ import net.minecraft.util.Arm;
 
 public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
   private final MinecraftClient client;
-  public static final ModificationInputTransformer<String, Boolean> booleanStringConsumer = Boolean::parseBoolean;
   public static final ModificationInputTransformer<String, Integer> integerStringConsumer = Integer::parseInt;
   public static final ModificationInputTransformer<String, Double> doubleStringConsumer = Double::parseDouble;
   private static final ModificationInputTransformer<String, NarratorMode> narratorModeStringConsumer = (value) -> switch (value) {
@@ -90,163 +90,140 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
   public MinecraftOptionsStorage(OptionsAccessHandler optionsAccessHandler) {
     super("minecraft");
     this.client = MinecraftClient.getInstance();
-    this.registerOption("autoJump", OptionImpl.createBuilder(Boolean.class, this, "autoJump")
+    this.registerOption("autoJump", BooleanOption.createBooleanBuilder(this, "autoJump")
         .setName(Text.translatable("options.autoJump"))
         .setBinding((options, value) -> options.getAutoJump().setValue(value),
             options -> options.getAutoJump().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("operatorItemsTab", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("operatorItemsTab", BooleanOption.createBooleanBuilder(this,
             "operatorItemsTab")
         .setName(Text.translatable("options.operatorItemsTab"))
         .setBinding((options, value) -> options.getOperatorItemsTab().setValue(value),
             options -> options.getOperatorItemsTab().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("autoSuggestions", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("autoSuggestions", BooleanOption.createBooleanBuilder(this,
             "autoSuggestions")
         .setName(Text.translatable("options.autoSuggestCommands"))
         .setBinding((options, value) -> options.getAutoSuggestions().setValue(value),
             options -> options.getAutoSuggestions().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("chatColors", OptionImpl.createBuilder(Boolean.class, this, "chatColors")
+    this.registerOption("chatColors", BooleanOption.createBooleanBuilder(this, "chatColors")
         .setName(Text.translatable("options.chat.color"))
         .setBinding((options, value) -> options.getChatColors().setValue(value),
             options -> options.getChatColors().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("chatLinks", OptionImpl.createBuilder(Boolean.class, this, "chatLinks")
+    this.registerOption("chatLinks", BooleanOption.createBooleanBuilder(this, "chatLinks")
         .setName(Text.translatable("options.chat.links"))
         .setBinding((options, value) -> options.getChatLinks().setValue(value),
             options -> options.getChatLinks().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("chatLinksPrompt", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("chatLinksPrompt", BooleanOption.createBooleanBuilder(this,
             "chatLinksPrompt")
         .setName(Text.translatable("options.chat.links.prompt"))
         .setBinding((options, value) -> options.getChatLinksPrompt().setValue(value),
             options -> options.getChatLinksPrompt().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("enableVsync", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("enableVsync", BooleanOption.createBooleanBuilder(this,
             "enableVsync")
         .setName(Text.translatable("options.vsync"))
         .setBinding((options, value) -> options.getEnableVsync().setValue(value),
             options -> options.getEnableVsync().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("options.entityShadows", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("options.entityShadows", BooleanOption.createBooleanBuilder(this,
             "entityShadows")
         .setName(Text.translatable("options.entityShadows"))
         .setBinding((options, value) -> options.getEntityShadows().setValue(value),
             options -> options.getEntityShadows().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("forceUnicodeFont", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("forceUnicodeFont", BooleanOption.createBooleanBuilder(this,
             "forceUnicodeFont")
         .setName(Text.translatable("options.forceUnicodeFont"))
         .setBinding((options, value) -> options.getForceUnicodeFont().setValue(value),
             options -> options.getForceUnicodeFont().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("invertYMouse", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("invertYMouse", BooleanOption.createBooleanBuilder(this,
             "invertYMouse")
         .setName(Text.translatable("options.invertMouse"))
         .setBinding((options, value) -> options.getInvertYMouse().setValue(value),
             options -> options.getInvertYMouse().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("discreteMouseScroll", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("discreteMouseScroll", BooleanOption.createBooleanBuilder(this,
             "discreteMouseScroll")
         .setName(Text.translatable("options.discrete_mouse_scroll"))
         .setBinding((options, value) -> options.getDiscreteMouseScroll().setValue(value),
             options -> options.getDiscreteMouseScroll().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("realmsNotifications", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("realmsNotifications", BooleanOption.createBooleanBuilder(this,
             "realmsNotifications")
         .setName(Text.translatable("options.realmsNotifications"))
         .setBinding((options, value) -> options.getRealmsNotifications().setValue(value),
             options -> options.getRealmsNotifications().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("reducedDebugInfo", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("reducedDebugInfo", BooleanOption.createBooleanBuilder(this,
             "reducedDebugInfo")
         .setName(Text.translatable("options.reducedDebugInfo"))
         .setBinding((options, value) -> options.getReducedDebugInfo().setValue(value),
             options -> options.getReducedDebugInfo().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("showSubtitles", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("showSubtitles", BooleanOption.createBooleanBuilder(this,
             "showSubtitles")
         .setName(Text.translatable("options.showSubtitles"))
         .setBinding((options, value) -> options.getShowSubtitles().setValue(value),
             options -> options.getShowSubtitles().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("directionalAudio", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("directionalAudio", BooleanOption.createBooleanBuilder(this,
             "directionalAudio")
         .setName(Text.translatable("options.directionalAudio"))
         .setBinding((options, value) -> options.getDirectionalAudio().setValue(value),
             options -> options.getDirectionalAudio().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("touchscreen", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("touchscreen", BooleanOption.createBooleanBuilder(this,
             "touchscreen")
         .setName(Text.translatable("options.touchscreen"))
         .setBinding((options, value) -> options.getTouchscreen().setValue(value),
             options -> options.getTouchscreen().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("fullscreen", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("fullscreen", BooleanOption.createBooleanBuilder(this,
             "fullscreen")
         .setName(Text.translatable("options.fullscreen"))
         .setBinding((options, value) -> options.getFullscreen().setValue(value),
             options -> options.getFullscreen().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("bobView", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("bobView", BooleanOption.createBooleanBuilder(this,
             "bobView")
         .setName(Text.translatable("options.viewBobbing"))
         .setBinding((options, value) -> options.getBobView().setValue(value),
             options -> options.getBobView().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("toggleCrouch", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("toggleCrouch", BooleanOption.createBooleanBuilder(this,
             "toggleCrouch")
         .setName(Text.translatable("key.sneak"))
         .setBinding((options, value) -> options.getSneakToggled().setValue(value),
             options -> options.getSneakToggled().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("toggleSprint", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("toggleSprint", BooleanOption.createBooleanBuilder(this,
             "toggleSprint")
         .setName(Text.translatable("key.sprint"))
         .setBinding((options, value) -> options.getSprintToggled().setValue(value),
             options -> options.getSprintToggled().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("darkMojangStudiosBackground", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("darkMojangStudiosBackground", BooleanOption.createBooleanBuilder(this,
             "darkMojangStudiosBackground")
         .setName(Text.translatable("options.darkMojangStudiosBackgroundColor"))
         .setBinding((options, value) -> options.getMonochromeLogo().setValue(value),
             options -> options.getMonochromeLogo().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("hideLightningFlashes", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("hideLightningFlashes", BooleanOption.createBooleanBuilder(this,
             "hideLightningFlashes")
         .setName(Text.translatable("options.hideLightningFlashes"))
         .setBinding((options, value) -> options.getHideMatchedNames().setValue(value),
             options -> options.getHideMatchedNames().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("hideSplashTexts", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("hideSplashTexts", BooleanOption.createBooleanBuilder(this,
             "hideSplashTexts")
         .setName(Text.translatable("options.hideSplashTexts"))
         .setBinding((options, value) -> options.getHideMatchedNames().setValue(value),
             options -> options.getHideMatchedNames().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
     this.registerOption("mouseSensitivity", OptionImpl.createBuilder(Double.class, this,
             "mouseSensitivity")
@@ -373,12 +350,11 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
         .addInputToValueTransformers(graphicsModeStringConsumer)
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
-    this.registerOption("ao", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("ao", BooleanOption.createBooleanBuilder(this,
             "ao")
         .setName(Text.translatable("options.ao"))
         .setBinding((options, value) -> options.getAo().setValue(value),
             options -> options.getAo().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
     this.registerOption("prioritizeChunkUpdates", OptionImpl.createBuilder(ChunkBuilderMode.class, this,
@@ -446,26 +422,23 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
             options -> options.getTextBackgroundOpacity().getValue())
         .addInputToValueTransformers(doubleStringConsumer)
         .build());
-    this.registerOption("backgroundForChatOnly", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("backgroundForChatOnly", BooleanOption.createBooleanBuilder(this,
             "backgroundForChatOnly")
         .setName(Text.translatable("options.accessibility.text_background"))
         .setBinding((options, value) -> options.getBackgroundForChatOnly().setValue(value),
             options -> options.getBackgroundForChatOnly().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("advancedItemTooltips", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("advancedItemTooltips", BooleanOption.createBooleanBuilder(this,
             "advancedItemTooltips")
         .setName(Text.of("Advanced item tooltips"))
         .setBinding((options, value) -> options.advancedItemTooltips = value,
             options -> options.advancedItemTooltips)
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("pauseOnLostFocus", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("pauseOnLostFocus", BooleanOption.createBooleanBuilder(this,
             "pauseOnLostFocus")
         .setName(Text.of("Pause on lost focus"))
         .setBinding((options, value) -> options.pauseOnLostFocus = value,
             options -> options.pauseOnLostFocus)
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
     this.registerOption("chatHeightFocused", OptionImpl.createBuilder(Double.class, this,
             "chatHeightFocused")
@@ -552,54 +525,47 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
             options -> options.getMouseWheelSensitivity().getValue())
         .addInputToValueTransformers(doubleStringConsumer)
         .build());
-    this.registerOption("rawMouseInput", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("rawMouseInput", BooleanOption.createBooleanBuilder(this,
             "rawMouseInput")
         .setName(Text.of("Raw mouse input"))
         .setBinding((options, value) -> options.getRawMouseInput().setValue(value),
             options -> options.getRawMouseInput().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("skipMultiplayerWarning", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("skipMultiplayerWarning", BooleanOption.createBooleanBuilder(this,
             "skipMultiplayerWarning")
         .setName(Text.of("Skip multiplayer warning"))
         .setBinding((options, value) -> options.skipMultiplayerWarning = value,
             options -> options.skipMultiplayerWarning)
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("skipRealms32bitWarning", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("skipRealms32bitWarning", BooleanOption.createBooleanBuilder(this,
             "skipRealms32bitWarning")
         .setName(Text.of("Skip realms 32-bit warning"))
         .setBinding((options, value) -> options.skipRealms32BitWarning = value,
             options -> options.skipRealms32BitWarning)
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("hideMatchedNames", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("hideMatchedNames", BooleanOption.createBooleanBuilder(this,
             "hideMatchedNames")
         .setName(Text.of("Hide matched names"))
         .setBinding((options, value) -> options.getHideMatchedNames().setValue(value),
             options -> options.getHideMatchedNames().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("hideBundleTutorial", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("hideBundleTutorial", BooleanOption.createBooleanBuilder(this,
             "hideBundleTutorial")
         .setName(Text.of("Hide bundle tutorial"))
         .setBinding((options, value) -> options.hideBundleTutorial = value,
             options -> options.hideBundleTutorial)
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("syncChunkWrites", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("syncChunkWrites", BooleanOption.createBooleanBuilder(this,
             "syncChunkWrites")
         .setName(Text.of("Sync chunk writes"))
         .setBinding((options, value) -> options.syncChunkWrites = value,
             options -> options.syncChunkWrites)
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
-    this.registerOption("showAutosaveIndicator", OptionImpl.createBuilder(Boolean.class, this,
+    this.registerOption("showAutosaveIndicator", BooleanOption.createBooleanBuilder(this,
             "showAutosaveIndicator")
         .setName(Text.of("Show autosave indicator"))
         .setBinding((options, value) -> options.getShowAutosaveIndicator().setValue(value),
             options -> options.getShowAutosaveIndicator().getValue())
-        .addInputToValueTransformers(booleanStringConsumer)
         .build());
   }
 
