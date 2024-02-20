@@ -26,7 +26,7 @@ public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ran
     return max;
   }
 
-  protected static class Builder<S, T, U extends Builder<S, T, ?>> extends OptionImpl.Builder<S, T, Builder<S, T, ?>> {
+  public static class Builder<S, T, U extends Builder<S, T, ?>> extends OptionImpl.Builder<S, T, Builder<S, T, ?>> {
     protected T min;
     protected T max;
 
