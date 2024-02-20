@@ -23,7 +23,7 @@ public class RangedLongOption<S> extends RangedOption<S, Long> {
           throw new ValueVerificationException.ValueNotInRange(storage.getStorageId(), optionId, value, min, max);
         }
       });
-      setInputToValueTransformers(inputToValueTransformer);
+      addInputToValueTransformers(inputToValueTransformer);
     }
 
     @Override
