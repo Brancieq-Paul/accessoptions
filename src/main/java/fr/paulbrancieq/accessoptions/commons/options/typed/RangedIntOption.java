@@ -22,11 +22,11 @@ public class RangedIntOption<S> extends RangedOption<S, Integer> {
           throw new ValueVerificationException.ValueNotInRange(storage.getStorageId(), optionId, value, min, max);
         }
       });
+      setInputToValueTransformers(inputToValueTransformer);
     }
 
     @Override
     public RangedIntOption<S> build() {
-      super.setInputToValueTransformers(inputToValueTransformer);
       return new RangedIntOption<>(this);
     }
   }

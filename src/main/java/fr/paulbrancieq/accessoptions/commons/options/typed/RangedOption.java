@@ -26,7 +26,7 @@ public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ran
     return max;
   }
 
-  public static class Builder<S, T, U extends Builder<S, T, ?>> extends OptionImpl.Builder<S, T, Builder<S, T, ?>> {
+  protected static class Builder<S, T, U extends Builder<S, T, ?>> extends OptionImpl.Builder<S, T, Builder<S, T, ?>> {
     protected T min;
     protected T max;
 
@@ -34,7 +34,7 @@ public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ran
       super(storage, optionId);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings("unchecked")
     public U setRange(T min, T max) {
       this.min = min;
       this.max = max;

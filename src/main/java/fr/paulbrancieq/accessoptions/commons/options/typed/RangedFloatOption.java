@@ -23,11 +23,11 @@ public class RangedFloatOption<S> extends RangedOption<S, Float> {
           throw new ValueVerificationException.ValueNotInRange(storage.getStorageId(), optionId, value, min, max);
         }
       });
+      setInputToValueTransformers(inputToValueTransformer);
     }
 
     @Override
     public RangedFloatOption<S> build() {
-      super.setInputToValueTransformers(inputToValueTransformer);
       return new RangedFloatOption<>(this);
     }
   }
