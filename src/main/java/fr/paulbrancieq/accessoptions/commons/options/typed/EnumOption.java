@@ -21,7 +21,7 @@ public class EnumOption<S, T> extends OptionImpl<S, T> {
     this.valueMap = builder.valueMap;
   }
 
-  public static <S, T> Builder<S, T, ?> createBuilder(OptionsStorage<S> storage, String optionId) {
+  public static <S, T> Builder<S, T, ?> createEnumBuilder(OptionsStorage<S> storage, String optionId) {
     return new Builder<>(storage, optionId);
   }
 

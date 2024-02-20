@@ -255,7 +255,7 @@ public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
             options -> options.getMouseSensitivity().getValue())
         .addInputToValueTransformers(doubleStringConsumer)
         .build());
-    this.registerOption("fov", RangedIntOption.createBuilder(this,
+    this.registerOption("fov", RangedIntOption.createRangedIntBuilder(this,
             "fov")
         .setName(Text.translatable("options.fov"))
         .setBinding((options, value) -> options.getFov().setValue(value),

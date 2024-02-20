@@ -10,7 +10,7 @@ public class RangedIntOption<S> extends RangedOption<S, Integer> {
     super(builder);
   }
 
-  public static <S> Builder<S> createBuilder(OptionsStorage<S> storage, String optionId) {
+  public static <S> Builder<S> createRangedIntBuilder(OptionsStorage<S> storage, String optionId) {
     return new Builder<>(storage, optionId);
   }
 

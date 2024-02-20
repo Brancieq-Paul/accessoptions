@@ -11,7 +11,7 @@ public class RangedDoubleOption<S> extends RangedOption<S, Double> {
     super(builder);
   }
 
-  public static <S> Builder<S> createBuilder(OptionsStorage<S> storage, String optionId) {
+  public static <S> Builder<S> createRangedDoubleBuilder(OptionsStorage<S> storage, String optionId) {
     return new Builder<>(storage, optionId);
   }
 

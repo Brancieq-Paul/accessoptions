@@ -11,7 +11,7 @@ public class RangedLongOption<S> extends RangedOption<S, Long> {
     super(builder);
   }
 
-  public static <S> Builder<S> createBuilder(OptionsStorage<S> storage, String optionId) {
+  public static <S> Builder<S> createRangedLongBuilder(OptionsStorage<S> storage, String optionId) {
     return new Builder<>(storage, optionId);
   }
 
