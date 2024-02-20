@@ -36,7 +36,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     this.description = builder.description == null ? builder.name.getString() : builder.description;
     this.optionId = builder.optionId;
     this.binding = builder.binding;
-    this.inputToValueTransformers = List.copyOf(builder.inputToValueTransformers);
+    this.inputToValueTransformers = builder.inputToValueTransformers;
     this.valueVerifier = builder.valueVerifier;
     this.reloaders = List.copyOf(builder.reloaders);
     this.enabled = builder.enabled;
