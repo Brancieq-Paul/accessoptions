@@ -21,7 +21,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
   protected final ValueVerifier<T> valueVerifier;
   protected final OptionBinding<S, T> binding;
   protected final List<Reloader> reloaders;
-  protected final Text name;
+  protected final Text displayName;
   protected final String optionId;
   protected final String description;
   protected T value;
@@ -29,11 +29,10 @@ public class OptionImpl<S, T> implements Option<S, T> {
   protected final boolean enabled;
 
   protected OptionImpl(Builder<S, T, ?> builder) {
-    Validate.notNull(builder.name, "Name must be specified");
     Validate.notNull(builder.binding, "Option binding must be specified");
     this.storage = builder.storage;
-    this.name = builder.name;
-    this.description = builder.description == null ? builder.name.getString() : builder.description;
+    this.displayName = builder.name == null ? Text.of(builder.optionId) : builder.name;
+    this.description = builder.description == null ? this.displayName.getString() : builder.description;
     this.optionId = builder.optionId;
     this.binding = builder.binding;
     this.inputToValueTransformers = builder.inputToValueTransformers;
@@ -45,7 +44,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
 
   @Override
   public Text getDisplayName() {
-    return this.name;
+    return this.displayName;
   }
 
   @Override
@@ -93,7 +92,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
       }
       this.pendingValue = (T) newValue;
     } else {
-      throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.name.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
+      throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.displayName.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
     }
   }
 
