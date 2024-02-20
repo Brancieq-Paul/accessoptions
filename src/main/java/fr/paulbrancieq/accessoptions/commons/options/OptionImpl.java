@@ -191,7 +191,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public U setInputToValueTransformers(List<ModificationInputTransformer<?, ? extends T>> transformers) {
+    public U addInputToValueTransformers(List<ModificationInputTransformer<?, ? extends T>> transformers) {
       Validate.notNull(transformers, "Argument must not be null");
 
       for (ModificationInputTransformer<?, ? extends T> transformer : transformers) {
@@ -205,10 +205,10 @@ public class OptionImpl<S, T> implements Option<S, T> {
 
     @SafeVarargs
     @SuppressWarnings("UnusedReturnValue")
-    public final U setInputToValueTransformers(ModificationInputTransformer<?, ? extends T>... transformers) {
+    public final U addInputToValueTransformers(ModificationInputTransformer<?, ? extends T>... transformers) {
       Validate.notNull(transformers, "Argument must not be null");
 
-      this.setInputToValueTransformers(List.of(transformers));
+      this.addInputToValueTransformers(List.of(transformers));
 
       return (U) this;
     }
