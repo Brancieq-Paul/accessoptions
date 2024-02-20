@@ -154,7 +154,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
       this.optionId = optionId;
     }
 
-    public final U setName(Text name) {
+    public U setName(Text name) {
       Validate.notNull(name, "Argument must not be null");
 
       this.name = name;
@@ -163,7 +163,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     }
 
     @SuppressWarnings("unused")
-    public final U setDescription(String description) {
+    public U setDescription(String description) {
       Validate.notNull(description, "Argument must not be null");
 
       this.description = description;
@@ -171,7 +171,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
       return (U) this;
     }
 
-    public final U setBinding(BiConsumer<S, T> setter, Function<S, T> getter) {
+    public U setBinding(BiConsumer<S, T> setter, Function<S, T> getter) {
       Validate.notNull(setter, "Setter must not be null");
       Validate.notNull(getter, "Getter must not be null");
 
@@ -182,10 +182,23 @@ public class OptionImpl<S, T> implements Option<S, T> {
 
 
     @SuppressWarnings("unused")
-    public final U setBinding(OptionBinding<S, T> binding) {
+    public U setBinding(OptionBinding<S, T> binding) {
       Validate.notNull(binding, "Argument must not be null");
 
       this.binding = binding;
+
+      return (U) this;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public U setInputToValueTransformers(List<ModificationInputTransformer<?, ? extends T>> transformers) {
+      Validate.notNull(transformers, "Argument must not be null");
+
+      for (ModificationInputTransformer<?, ? extends T> transformer : transformers) {
+        Validate.notNull(transformer, "Argument must not be null");
+      }
+
+      this.inputToValueTransformers.addAll(transformers);
 
       return (U) this;
     }
@@ -195,17 +208,13 @@ public class OptionImpl<S, T> implements Option<S, T> {
     public final U setInputToValueTransformers(ModificationInputTransformer<?, ? extends T>... transformers) {
       Validate.notNull(transformers, "Argument must not be null");
 
-      for (ModificationInputTransformer<?, ? extends T> transformer : transformers) {
-        Validate.notNull(transformer, "Argument must not be null");
-      }
-
-      this.inputToValueTransformers.addAll(List.of(transformers));
+      this.setInputToValueTransformers(List.of(transformers));
 
       return (U) this;
     }
 
     @SuppressWarnings({"unused", "UnusedReturnValue"})
-    public final U setValueVerifier(ValueVerifier<T> valueVerifier) {
+    public U setValueVerifier(ValueVerifier<T> valueVerifier) {
       Validate.notNull(valueVerifier, "Argument must not be null");
 
       this.valueVerifier = valueVerifier;
@@ -213,7 +222,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
       return (U) this;
     }
 
-    public final U setReloaders(Reloader... reloaders) {
+    public U setReloaders(Reloader... reloaders) {
       Validate.notNull(reloaders, "Argument must not be null");
 
       this.reloaders.addAll(List.of(reloaders));
@@ -222,7 +231,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     }
 
     @SuppressWarnings("unused")
-    public final U setEnabled(boolean value) {
+    public U setEnabled(boolean value) {
       this.enabled = value;
 
       return (U) this;
