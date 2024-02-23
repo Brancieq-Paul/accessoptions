@@ -1,0 +1,11 @@
+{
+  "access_options.minecraft.options.advanced_tooltips": "Advanced Tooltips",
+  "access_options.minecraft.options.advanced_tooltips.description": "Show advanced information when hovering over an item",
+  "access_options.minecraft.options.pause_on_lost_focus": "Pause on Lost Focus",
+  "access_options.minecraft.options.pause_on_lost_focus.description": "Pause the game when it loses focus (switch window, opening in game menu, etc.)",
+  "access_options.minecraft.options.tutorial_step": "Tutorial Step",
+  "access_options.minecraft.options.skip_multiplayer_warning": "Skip multiplayer warning",
+  "access_options.minecraft.options.skip_realms_32_bit_warning": "Skip realms 32-bit warning",
+  "access_options.minecraft.options.hide_bundle_tutorial": "Hide bundle tutorial",
+  "access_options.minecraft.options.show_auto_save_indicator": "Show Auto Save Indicator"
+}

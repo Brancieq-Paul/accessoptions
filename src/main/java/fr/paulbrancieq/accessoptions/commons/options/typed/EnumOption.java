@@ -11,6 +11,7 @@ import net.minecraft.client.MinecraftClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class EnumOption<S, T> extends OptionImpl<S, T> {
@@ -21,7 +22,7 @@ public class EnumOption<S, T> extends OptionImpl<S, T> {
     this.valueMap = builder.valueMap;
   }
 
-  public static <S, T> Builder<S, T, ?> createEnumBuilder(OptionsStorage<S> storage, String optionId) {
+  public static <S, T> Builder<S, T, ?> createEnumBuilder(@SuppressWarnings("unused") Class<T> type, OptionsStorage<S> storage, String optionId) {
     return new Builder<>(storage, optionId);
   }
 
@@ -55,23 +56,23 @@ public class EnumOption<S, T> extends OptionImpl<S, T> {
     }
 
     @SuppressWarnings({"unused","UnusedReturnValue"})
-    public U addTranslatedAssociation(String translation_key, T value, String language) {
-      if (!language.equals("en_us")) {
+    public U addTranslatedAssociation(String translation_key, T value) {
+      if (!MinecraftClient.getInstance().options.language.equals("en_us")) {
         addAssociation(translationStorage.get(translation_key), value);
       }
       addAssociation(I18n.translate(translation_key), value);
       return (U) this;
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "UnusedReturnValue"})
     public U addAssociationMap(Map<String, T> valueMap) {
       this.valueMap.putAll(valueMap);
       return (U) this;
     }
 
     @SuppressWarnings("unused")
-    public U addTranslatedAssociationMap(Map<String, T> valueMap, String language) {
-      valueMap.forEach((key, value) -> addTranslatedAssociation(key, value, language));
+    public U addTranslatedAssociationMap(LinkedHashMap<String, T> valueMap) {
+      valueMap.forEach(this::addTranslatedAssociation);
       return (U) this;
     }
 

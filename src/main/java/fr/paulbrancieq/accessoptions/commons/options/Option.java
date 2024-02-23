@@ -4,12 +4,11 @@ import fr.paulbrancieq.accessoptions.commons.exeptions.AccessOptionsException;
 import fr.paulbrancieq.accessoptions.commons.exeptions.ValueVerificationException;
 import fr.paulbrancieq.accessoptions.commons.reloader.Reloader;
 import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
-import net.minecraft.text.Text;
 
 import java.util.Collection;
 
 public interface Option<S, T> {
-  Text getDisplayName();
+  String getDisplayName();
   @SuppressWarnings("unused")
   String getId();
   @SuppressWarnings("unused")

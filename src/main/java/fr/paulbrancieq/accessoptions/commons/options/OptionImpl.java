@@ -8,6 +8,7 @@ import fr.paulbrancieq.accessoptions.commons.reloader.Reloader;
 import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,13 +16,15 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+
+
 public class OptionImpl<S, T> implements Option<S, T> {
   protected final OptionsStorage<S> storage;
   protected final List<ModificationInputTransformer<?, ? extends T>> inputToValueTransformers;
   protected final ValueVerifier<T> valueVerifier;
   protected final OptionBinding<S, T> binding;
   protected final List<Reloader> reloaders;
-  protected final Text displayName;
+  protected final String displayName;
   protected final String optionId;
   protected final String description;
   protected T value;
@@ -31,8 +34,8 @@ public class OptionImpl<S, T> implements Option<S, T> {
   protected OptionImpl(Builder<S, T, ?> builder) {
     Validate.notNull(builder.binding, "Option binding must be specified");
     this.storage = builder.storage;
-    this.displayName = builder.name == null ? Text.of(builder.optionId) : builder.name;
-    this.description = builder.description == null ? this.displayName.getString() : builder.description;
+    this.displayName = builder.displayName == null ? builder.optionId : builder.displayName;
+    this.description = builder.description == null ? this.displayName : builder.description;
     this.optionId = builder.optionId;
     this.binding = builder.binding;
     this.inputToValueTransformers = builder.inputToValueTransformers;
@@ -43,7 +46,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
   }
 
   @Override
-  public Text getDisplayName() {
+  public String getDisplayName() {
     return this.displayName;
   }
 
@@ -92,7 +95,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
       }
       this.pendingValue = (T) newValue;
     } else {
-      throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.displayName.getString(), value.getClass().getTypeName(), newValue.getClass().getTypeName());
+      throw new AccessOptionsException.OptionTypeMismatch(this.storage.getStorageId(), this.displayName, value.getClass().getTypeName(), newValue.getClass().getTypeName());
     }
   }
 
@@ -139,7 +142,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
   public static class Builder<S, T, U extends Builder<S, T, ?>> {
     protected final OptionsStorage<S> storage;
     protected final String optionId;
-    protected Text name;
+    protected String displayName;
     protected String description;
     protected OptionBinding<S, T> binding;
     protected List<ModificationInputTransformer<?, ? extends T>> inputToValueTransformers = new ArrayList<>();
@@ -153,24 +156,24 @@ public class OptionImpl<S, T> implements Option<S, T> {
       this.optionId = optionId;
     }
 
-    public U setName(Text name) {
-      Validate.notNull(name, "Argument must not be null");
+    public U setDisplayName(@NotNull String displayName) {
+      Validate.notNull(displayName, "Argument must not be null");
 
-      this.name = name;
+      this.displayName = Text.translatable(displayName).getString();
 
       return (U) this;
     }
 
     @SuppressWarnings("unused")
-    public U setDescription(String description) {
+    public U setDescription(@NotNull String description) {
       Validate.notNull(description, "Argument must not be null");
 
-      this.description = description;
+      this.description = Text.translatable(description).getString();
 
       return (U) this;
     }
 
-    public U setBinding(BiConsumer<S, T> setter, Function<S, T> getter) {
+    public U setBinding(@NotNull BiConsumer<S, T> setter, Function<S, T> getter) {
       Validate.notNull(setter, "Setter must not be null");
       Validate.notNull(getter, "Getter must not be null");
 
@@ -180,8 +183,8 @@ public class OptionImpl<S, T> implements Option<S, T> {
     }
 
 
-    @SuppressWarnings("unused")
-    public U setBinding(OptionBinding<S, T> binding) {
+    @SuppressWarnings({"unused", "UnusedReturnValue"})
+    public U setBinding(@NotNull OptionBinding<S, T> binding) {
       Validate.notNull(binding, "Argument must not be null");
 
       this.binding = binding;
@@ -190,7 +193,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public U addInputToValueTransformers(List<ModificationInputTransformer<?, ? extends T>> transformers) {
+    public U addInputToValueTransformers(@NotNull List<ModificationInputTransformer<?, ? extends T>> transformers) {
       Validate.notNull(transformers, "Argument must not be null");
 
       for (ModificationInputTransformer<?, ? extends T> transformer : transformers) {
@@ -204,7 +207,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
 
     @SafeVarargs
     @SuppressWarnings("UnusedReturnValue")
-    public final U addInputToValueTransformers(ModificationInputTransformer<?, ? extends T>... transformers) {
+    public final U addInputToValueTransformers(@NotNull ModificationInputTransformer<?, ? extends T>... transformers) {
       Validate.notNull(transformers, "Argument must not be null");
 
       this.addInputToValueTransformers(List.of(transformers));
@@ -213,7 +216,7 @@ public class OptionImpl<S, T> implements Option<S, T> {
     }
 
     @SuppressWarnings({"unused", "UnusedReturnValue"})
-    public U setValueVerifier(ValueVerifier<T> valueVerifier) {
+    public U setValueVerifier(@NotNull ValueVerifier<T> valueVerifier) {
       Validate.notNull(valueVerifier, "Argument must not be null");
 
       this.valueVerifier = valueVerifier;
@@ -221,16 +224,25 @@ public class OptionImpl<S, T> implements Option<S, T> {
       return (U) this;
     }
 
-    public U setReloaders(Reloader... reloaders) {
+    @SuppressWarnings("UnusedReturnValue")
+    public U setReloaders(@NotNull Collection<Reloader> reloaders) {
       Validate.notNull(reloaders, "Argument must not be null");
 
-      this.reloaders.addAll(List.of(reloaders));
+      this.reloaders.addAll(reloaders);
 
       return (U) this;
     }
 
-    @SuppressWarnings("unused")
-    public U setEnabled(boolean value) {
+    public U setReloaders(@NotNull Reloader... reloaders) {
+      Validate.notNull(reloaders, "Argument must not be null");
+
+      this.setReloaders(List.of(reloaders));
+
+      return (U) this;
+    }
+
+    @SuppressWarnings({"unused","UnusedReturnValue"})
+    public U setEnabled(@NotNull Boolean value) {
       this.enabled = value;
 
       return (U) this;

@@ -77,7 +77,6 @@ Handled options:
 - skipRealms32bitWarning (unsafe)
 - hideMatchedNames (unsafe)
 - hideBundleTutorial (safe)
-- syncChunkWrites (unsafe)
 - showAutosaveIndicator (safe)
 
 Options that are **NOT** and should **never** be handled by this mod:
@@ -91,6 +90,7 @@ Options that are **NOT** and should **never** be handled by this mod:
 - overrideWidth (has impact only on launch, not while playing)
 - overrideHeight (same as above)
 - joinedFirstServer (handled by the game, not useful to handle)
+- syncChunkWrites (OS dependent)
 
 Options to be handled in the future:
 - allowServerListing (unsafe)

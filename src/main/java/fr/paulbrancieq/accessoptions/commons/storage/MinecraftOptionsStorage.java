@@ -2,9 +2,10 @@ package fr.paulbrancieq.accessoptions.commons.storage;
 
 import fr.paulbrancieq.accessoptions.AccessOptions;
 import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
-import fr.paulbrancieq.accessoptions.commons.options.ModificationInputTransformer;
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
 import fr.paulbrancieq.accessoptions.commons.options.typed.BooleanOption;
+import fr.paulbrancieq.accessoptions.commons.options.typed.EnumOption;
+import fr.paulbrancieq.accessoptions.commons.options.typed.RangedDoubleOption;
 import fr.paulbrancieq.accessoptions.commons.options.typed.RangedIntOption;
 import fr.paulbrancieq.accessoptions.commons.reloader.integrated.RequiresRendererReload;
 import net.fabricmc.api.EnvType;
@@ -17,553 +18,569 @@ import net.minecraft.network.message.ChatVisibility;
 import net.minecraft.text.Text;
 import net.minecraft.util.Arm;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Stream;
+
 public class MinecraftOptionsStorage extends OptionsStorageImpl<GameOptions> {
   private final MinecraftClient client;
-  public static final ModificationInputTransformer<String, Integer> integerStringConsumer = Integer::parseInt;
-  public static final ModificationInputTransformer<String, Double> doubleStringConsumer = Double::parseDouble;
-  private static final ModificationInputTransformer<String, NarratorMode> narratorModeStringConsumer = (value) -> switch (value) {
-    case "all" -> NarratorMode.ALL;
-    case "chat" -> NarratorMode.CHAT;
-    case "off" -> NarratorMode.OFF;
-    case "system" -> NarratorMode.SYSTEM;
-    default -> throw new IllegalArgumentException("Invalid narrator mode value: " + value);
-  };
-
-  private static final ModificationInputTransformer<String, ParticlesMode> particlesModeStringConsumer = (value) -> switch (value) {
-    case "all" -> ParticlesMode.ALL;
-    case "decreased" -> ParticlesMode.DECREASED;
-    case "minimal" -> ParticlesMode.MINIMAL;
-    default -> throw new IllegalArgumentException("Invalid particles mode value: " + value);
-  };
-
-  private static final ModificationInputTransformer<String, GraphicsMode> graphicsModeStringConsumer = (value) -> switch (value) {
-    case "fancy" -> GraphicsMode.FANCY;
-    case "fast" -> GraphicsMode.FAST;
-    case "fabulous" -> GraphicsMode.FABULOUS;
-    default -> throw new IllegalArgumentException("Invalid graphics mode value: " + value);
-  };
-
-  private static final ModificationInputTransformer<String, ChunkBuilderMode> chunkBuilderModeStringConsumer = (value) -> switch (value) {
-    case "none" -> ChunkBuilderMode.NONE;
-    case "player" -> ChunkBuilderMode.PLAYER_AFFECTED;
-    case "nearby" -> ChunkBuilderMode.NEARBY;
-    default -> throw new IllegalArgumentException("Invalid chunk builder mode value: " + value);
-  };
-
-  private static final ModificationInputTransformer<String, CloudRenderMode> cloudRenderModeStringConsumer = (value) -> switch (value) {
-    case "fast" -> CloudRenderMode.FAST;
-    case "fancy" -> CloudRenderMode.FANCY;
-    case "off" -> CloudRenderMode.OFF;
-    default -> throw new IllegalArgumentException("Invalid cloud render mode value: " + value);
-  };
-
-  private static final ModificationInputTransformer<String, ChatVisibility> chatVisibilityStringConsumer = (value) -> switch (value) {
-    case "full" -> ChatVisibility.FULL;
-    case "system" -> ChatVisibility.SYSTEM;
-    case "hidden" -> ChatVisibility.HIDDEN;
-    default -> throw new IllegalArgumentException("Invalid chat visibility value: " + value);
-  };
-
-  private static final ModificationInputTransformer<String, Arm> armStringConsumer = (value) -> switch (value) {
-    case "left" -> Arm.LEFT;
-    case "right" -> Arm.RIGHT;
-    default -> throw new IllegalArgumentException("Invalid arm value: " + value);
-  };
-
-  private static final ModificationInputTransformer<String, AttackIndicator> attackIndicatorModeStringConsumer = (value) -> switch (value) {
-    case "off" -> AttackIndicator.OFF;
-    case "crosshair" -> AttackIndicator.CROSSHAIR;
-    case "hotbar" -> AttackIndicator.HOTBAR;
-    default -> throw new IllegalArgumentException("Invalid attack indicator mode value: " + value);
-  };
-
-  private static final ModificationInputTransformer<String, TutorialStep> tutorialStepStringConsumer = (value) -> switch (value) {
-    case "movement" -> TutorialStep.MOVEMENT;
-    case "find_tree" -> TutorialStep.FIND_TREE;
-    case "punch_tree" -> TutorialStep.PUNCH_TREE;
-    case "open_inventory" -> TutorialStep.OPEN_INVENTORY;
-    case "craft_planks" -> TutorialStep.CRAFT_PLANKS;
-    case "none" -> TutorialStep.NONE;
-    default -> throw new IllegalArgumentException("Invalid tutorial step value: " + value);
-  };
 
   public MinecraftOptionsStorage(OptionsAccessHandler optionsAccessHandler) {
     super("minecraft");
     this.client = MinecraftClient.getInstance();
     this.registerOption("autoJump", BooleanOption.createBooleanBuilder(this, "autoJump")
-        .setName(Text.translatable("options.autoJump"))
+        .setDisplayName("options.autoJump")
         .setBinding((options, value) -> options.getAutoJump().setValue(value),
             options -> options.getAutoJump().getValue())
         .build());
     this.registerOption("operatorItemsTab", BooleanOption.createBooleanBuilder(this,
             "operatorItemsTab")
-        .setName(Text.translatable("options.operatorItemsTab"))
+        .setDisplayName("options.operatorItemsTab")
         .setBinding((options, value) -> options.getOperatorItemsTab().setValue(value),
             options -> options.getOperatorItemsTab().getValue())
         .build());
     this.registerOption("autoSuggestions", BooleanOption.createBooleanBuilder(this,
             "autoSuggestions")
-        .setName(Text.translatable("options.autoSuggestCommands"))
+        .setDisplayName("options.autoSuggestCommands")
         .setBinding((options, value) -> options.getAutoSuggestions().setValue(value),
             options -> options.getAutoSuggestions().getValue())
         .build());
     this.registerOption("chatColors", BooleanOption.createBooleanBuilder(this, "chatColors")
-        .setName(Text.translatable("options.chat.color"))
+        .setDisplayName("options.chat.color")
         .setBinding((options, value) -> options.getChatColors().setValue(value),
             options -> options.getChatColors().getValue())
         .build());
     this.registerOption("chatLinks", BooleanOption.createBooleanBuilder(this, "chatLinks")
-        .setName(Text.translatable("options.chat.links"))
+        .setDisplayName("options.chat.links")
         .setBinding((options, value) -> options.getChatLinks().setValue(value),
             options -> options.getChatLinks().getValue())
         .build());
     this.registerOption("chatLinksPrompt", BooleanOption.createBooleanBuilder(this,
             "chatLinksPrompt")
-        .setName(Text.translatable("options.chat.links.prompt"))
+        .setDisplayName("options.chat.links.prompt")
         .setBinding((options, value) -> options.getChatLinksPrompt().setValue(value),
             options -> options.getChatLinksPrompt().getValue())
         .build());
     this.registerOption("enableVsync", BooleanOption.createBooleanBuilder(this,
             "enableVsync")
-        .setName(Text.translatable("options.vsync"))
+        .setDisplayName("options.vsync")
         .setBinding((options, value) -> options.getEnableVsync().setValue(value),
             options -> options.getEnableVsync().getValue())
         .build());
     this.registerOption("options.entityShadows", BooleanOption.createBooleanBuilder(this,
             "entityShadows")
-        .setName(Text.translatable("options.entityShadows"))
+        .setDisplayName("options.entityShadows")
         .setBinding((options, value) -> options.getEntityShadows().setValue(value),
             options -> options.getEntityShadows().getValue())
         .build());
     this.registerOption("forceUnicodeFont", BooleanOption.createBooleanBuilder(this,
             "forceUnicodeFont")
-        .setName(Text.translatable("options.forceUnicodeFont"))
+        .setDisplayName("options.forceUnicodeFont")
         .setBinding((options, value) -> options.getForceUnicodeFont().setValue(value),
             options -> options.getForceUnicodeFont().getValue())
         .build());
     this.registerOption("invertYMouse", BooleanOption.createBooleanBuilder(this,
             "invertYMouse")
-        .setName(Text.translatable("options.invertMouse"))
+        .setDisplayName("options.invertMouse")
         .setBinding((options, value) -> options.getInvertYMouse().setValue(value),
             options -> options.getInvertYMouse().getValue())
         .build());
     this.registerOption("discreteMouseScroll", BooleanOption.createBooleanBuilder(this,
             "discreteMouseScroll")
-        .setName(Text.translatable("options.discrete_mouse_scroll"))
+        .setDisplayName("options.discrete_mouse_scroll")
         .setBinding((options, value) -> options.getDiscreteMouseScroll().setValue(value),
             options -> options.getDiscreteMouseScroll().getValue())
         .build());
     this.registerOption("realmsNotifications", BooleanOption.createBooleanBuilder(this,
             "realmsNotifications")
-        .setName(Text.translatable("options.realmsNotifications"))
+        .setDisplayName("options.realmsNotifications")
         .setBinding((options, value) -> options.getRealmsNotifications().setValue(value),
             options -> options.getRealmsNotifications().getValue())
         .build());
     this.registerOption("reducedDebugInfo", BooleanOption.createBooleanBuilder(this,
             "reducedDebugInfo")
-        .setName(Text.translatable("options.reducedDebugInfo"))
+        .setDisplayName("options.reducedDebugInfo")
         .setBinding((options, value) -> options.getReducedDebugInfo().setValue(value),
             options -> options.getReducedDebugInfo().getValue())
         .build());
     this.registerOption("showSubtitles", BooleanOption.createBooleanBuilder(this,
             "showSubtitles")
-        .setName(Text.translatable("options.showSubtitles"))
+        .setDisplayName("options.showSubtitles")
         .setBinding((options, value) -> options.getShowSubtitles().setValue(value),
             options -> options.getShowSubtitles().getValue())
         .build());
     this.registerOption("directionalAudio", BooleanOption.createBooleanBuilder(this,
             "directionalAudio")
-        .setName(Text.translatable("options.directionalAudio"))
+        .setDisplayName("options.directionalAudio")
         .setBinding((options, value) -> options.getDirectionalAudio().setValue(value),
             options -> options.getDirectionalAudio().getValue())
         .build());
     this.registerOption("touchscreen", BooleanOption.createBooleanBuilder(this,
             "touchscreen")
-        .setName(Text.translatable("options.touchscreen"))
+        .setDisplayName("options.touchscreen")
         .setBinding((options, value) -> options.getTouchscreen().setValue(value),
             options -> options.getTouchscreen().getValue())
         .build());
     this.registerOption("fullscreen", BooleanOption.createBooleanBuilder(this,
             "fullscreen")
-        .setName(Text.translatable("options.fullscreen"))
+        .setDisplayName("options.fullscreen")
         .setBinding((options, value) -> options.getFullscreen().setValue(value),
             options -> options.getFullscreen().getValue())
         .build());
     this.registerOption("bobView", BooleanOption.createBooleanBuilder(this,
             "bobView")
-        .setName(Text.translatable("options.viewBobbing"))
+        .setDisplayName("options.viewBobbing")
         .setBinding((options, value) -> options.getBobView().setValue(value),
             options -> options.getBobView().getValue())
         .build());
     this.registerOption("toggleCrouch", BooleanOption.createBooleanBuilder(this,
             "toggleCrouch")
-        .setName(Text.translatable("key.sneak"))
+        .setDisplayName("key.sneak")
         .setBinding((options, value) -> options.getSneakToggled().setValue(value),
             options -> options.getSneakToggled().getValue())
         .build());
     this.registerOption("toggleSprint", BooleanOption.createBooleanBuilder(this,
             "toggleSprint")
-        .setName(Text.translatable("key.sprint"))
+        .setDisplayName("key.sprint")
         .setBinding((options, value) -> options.getSprintToggled().setValue(value),
             options -> options.getSprintToggled().getValue())
         .build());
     this.registerOption("darkMojangStudiosBackground", BooleanOption.createBooleanBuilder(this,
             "darkMojangStudiosBackground")
-        .setName(Text.translatable("options.darkMojangStudiosBackgroundColor"))
+        .setDisplayName("options.darkMojangStudiosBackgroundColor")
         .setBinding((options, value) -> options.getMonochromeLogo().setValue(value),
             options -> options.getMonochromeLogo().getValue())
         .build());
     this.registerOption("hideLightningFlashes", BooleanOption.createBooleanBuilder(this,
             "hideLightningFlashes")
-        .setName(Text.translatable("options.hideLightningFlashes"))
+        .setDisplayName("options.hideLightningFlashes")
+        .setDescription(Text.translatable("options.hideLightningFlashes.tooltip").getString())
         .setBinding((options, value) -> options.getHideMatchedNames().setValue(value),
             options -> options.getHideMatchedNames().getValue())
         .build());
     this.registerOption("hideSplashTexts", BooleanOption.createBooleanBuilder(this,
             "hideSplashTexts")
-        .setName(Text.translatable("options.hideSplashTexts"))
+        .setDisplayName("options.hideSplashTexts")
         .setBinding((options, value) -> options.getHideMatchedNames().setValue(value),
             options -> options.getHideMatchedNames().getValue())
         .build());
-    this.registerOption("mouseSensitivity", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("mouseSensitivity", RangedDoubleOption.createRangedDoubleBuilder(this,
             "mouseSensitivity")
-        .setName(Text.translatable("options.sensitivity"))
+        .setDisplayName("options.sensitivity")
         .setBinding((options, value) -> options.getMouseSensitivity().setValue(value),
             options -> options.getMouseSensitivity().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
     this.registerOption("fov", RangedIntOption.createRangedIntBuilder(this,
             "fov")
-        .setName(Text.translatable("options.fov"))
+        .setDisplayName("options.fov")
         .setBinding((options, value) -> options.getFov().setValue(value),
             options -> options.getFov().getValue())
-        .addInputToValueTransformers(integerStringConsumer)
         .setRange(30, 110)
         .build());
-    this.registerOption("screenEffectScale", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("screenEffectScale", RangedDoubleOption.createRangedDoubleBuilder(this,
             "screenEffectScale")
-        .setName(Text.translatable("options.screenEffectScale"))
+        .setDisplayName("options.screenEffectScale")
+        .setDescription("options.screenEffectScale.tooltip")
         .setBinding((options, value) -> options.getDistortionEffectScale().setValue(value),
             options -> options.getDistortionEffectScale().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("fovEffectScale", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("fovEffectScale", RangedDoubleOption.createRangedDoubleBuilder(this,
             "fovEffectScale")
-        .setName(Text.translatable("options.fovEffectScale"))
+        .setDisplayName("options.fovEffectScale")
+        .setDescription("options.fovEffectScale.tooltip")
         .setBinding((options, value) -> options.getFovEffectScale().setValue(value),
             options -> options.getFovEffectScale().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("darknessEffectScale", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("darknessEffectScale", RangedDoubleOption.createRangedDoubleBuilder(this,
             "darknessEffectScale")
-        .setName(Text.translatable("options.darknessEffectScale"))
+        .setDisplayName("options.darknessEffectScale")
+        .setDescription("options.darknessEffectScale.tooltip")
         .setBinding((options, value) -> options.getDarknessEffectScale().setValue(value),
             options -> options.getDarknessEffectScale().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("glintSpeed", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("glintSpeed", RangedDoubleOption.createRangedDoubleBuilder(this,
             "glintSpeed")
-        .setName(Text.translatable("options.glintSpeed"))
+        .setDisplayName("options.glintSpeed")
+        .setDescription("options.glintSpeed.tooltip")
         .setBinding((options, value) -> options.getGlintSpeed().setValue(value),
             options -> options.getGlintSpeed().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("glintStrength", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("glintStrength", RangedDoubleOption.createRangedDoubleBuilder(this,
             "glintStrength")
-        .setName(Text.translatable("options.glintStrength"))
+        .setDisplayName("options.glintStrength")
+        .setDescription("options.glintStrength.tooltip")
         .setBinding((options, value) -> options.getGlintStrength().setValue(value),
             options -> options.getGlintStrength().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("damageTiltStrength", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("damageTiltStrength", RangedDoubleOption.createRangedDoubleBuilder(this,
             "damageTiltStrength")
-        .setName(Text.translatable("options.damageTiltStrength"))
+        .setDisplayName("options.damageTiltStrength")
+        .setDescription("options.damageTiltStrength.tooltip")
         .setBinding((options, value) -> options.getDamageTiltStrength().setValue(value),
             options -> options.getDamageTiltStrength().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("narratorHotkey", OptionImpl.createBuilder(NarratorMode.class, this,
+    this.registerOption("narratorHotkey", BooleanOption.createBooleanBuilder(this,
             "narratorHotkey")
-        .setName(Text.translatable("options.narrator"))
-        .setBinding((options, value) -> options.getNarrator().setValue(value),
-            options -> options.getNarrator().getValue())
-        .addInputToValueTransformers(narratorModeStringConsumer)
+        .setDisplayName("options.accessibility.narrator_hotkey")
+        .setDescription(MinecraftClient.IS_SYSTEM_MAC ? Text.translatable(
+            "options.accessibility.narrator_hotkey.mac.tooltip").getString() :
+            Text.translatable("options.accessibility.narrator_hotkey.tooltip").getString())
+        .setBinding((options, value) -> options.getNarratorHotkey().setValue(value),
+            options -> options.getNarratorHotkey().getValue())
         .build());
-    this.registerOption("gamma", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("gamma", RangedDoubleOption.createRangedDoubleBuilder(this,
             "gamma")
-        .setName(Text.translatable("options.gamma"))
+        .setDisplayName("options.gamma")
         .setBinding((options, value) -> options.getGamma().setValue(value),
             options -> options.getGamma().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("renderDistance", OptionImpl.createBuilder(Integer.class, this,
+    this.registerOption("renderDistance", RangedIntOption.createRangedIntBuilder(this,
             "renderDistance")
-        .setName(Text.translatable("options.renderDistance"))
+        .setDisplayName("options.renderDistance")
         .setBinding((options, value) -> options.getViewDistance().setValue(value),
             options -> options.getViewDistance().getValue())
-        .addInputToValueTransformers(integerStringConsumer)
+        .setRange(2, 32)
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
-    this.registerOption("simulationDistance", OptionImpl.createBuilder(Integer.class, this,
+    this.registerOption("simulationDistance", RangedIntOption.createRangedIntBuilder(this,
             "simulationDistance")
-        .setName(Text.translatable("options.simulationDistance"))
+        .setDisplayName("options.simulationDistance")
         .setBinding((options, value) -> {
           options.getSimulationDistance().setValue(value);
           client.onResolutionChanged();
         }, options -> options.getSimulationDistance().getValue())
-        .addInputToValueTransformers(integerStringConsumer)
+        .setRange(2, 32)
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
-    this.registerOption("entityDistanceScaling", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("entityDistanceScaling", RangedDoubleOption.createRangedDoubleBuilder(this,
             "entityDistanceScaling")
-        .setName(Text.translatable("options.entityDistanceScaling"))
+        .setDisplayName("options.entityDistanceScaling")
         .setBinding((options, value) -> options.getEntityDistanceScaling().setValue(value),
             options -> options.getEntityDistanceScaling().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.5, 5.0)
         .build());
-    this.registerOption("guiScale", OptionImpl.createBuilder(Integer.class, this,
+    this.registerOption("guiScale", RangedIntOption.createRangedIntBuilder(this,
             "guiScale")
-        .setName(Text.translatable("options.guiScale"))
-        .setBinding((options, value) -> options.getGuiScale().setValue(value),
+        .setDisplayName("options.guiScale")
+        .setBinding((options, value) -> {
+              options.getGuiScale().setValue(value);
+              client.onResolutionChanged();
+            },
             options -> options.getGuiScale().getValue())
-        .addInputToValueTransformers(integerStringConsumer)
+        .setRange(0, client.getWindow().calculateScaleFactor(0,
+            client.forcesUnicodeFont()))
         .build());
-    this.registerOption("particles", OptionImpl.createBuilder(ParticlesMode.class, this,
+    this.registerOption("particles", EnumOption.createEnumBuilder(ParticlesMode.class, this,
             "particles")
-        .setName(Text.translatable("options.particles"))
+        .setDisplayName("options.particles")
         .setBinding((options, value) -> options.getParticles().setValue(value),
             options -> options.getParticles().getValue())
-        .addInputToValueTransformers(particlesModeStringConsumer)
+        .addTranslatedAssociationMap(new LinkedHashMap<>() {
+          {
+            this.put(ParticlesMode.ALL.getTranslationKey(), ParticlesMode.ALL);
+            this.put(ParticlesMode.DECREASED.getTranslationKey(), ParticlesMode.DECREASED);
+            this.put(ParticlesMode.MINIMAL.getTranslationKey(), ParticlesMode.MINIMAL);
+          }
+        })
         .build());
-    this.registerOption("maxFps", OptionImpl.createBuilder(Integer.class, this,
+    this.registerOption("maxFps", RangedIntOption.createRangedIntBuilder(this,
             "maxFps")
-        .setName(Text.translatable("options.framerateLimit"))
-        .setBinding((options, value) -> options.getMaxFps().setValue(value),
+        .setDisplayName("options.framerateLimit")
+        .setBinding((options, value) -> {
+              options.getMaxFps().setValue(value);
+              client.getWindow().setFramerateLimit(value);
+            },
             options -> options.getMaxFps().getValue())
-        .addInputToValueTransformers(integerStringConsumer)
         .build());
-    this.registerOption("graphicsMode", OptionImpl.createBuilder(GraphicsMode.class, this,
+    //TODO: setDescription with lambda
+    this.registerOption("graphicsMode", EnumOption.createEnumBuilder(GraphicsMode.class, this,
             "graphicsMode")
-        .setName(Text.translatable("options.graphics"))
+        .setDisplayName("options.graphics")
         .setBinding((options, value) -> options.getGraphicsMode().setValue(value),
             options -> options.getGraphicsMode().getValue())
-        .addInputToValueTransformers(graphicsModeStringConsumer)
+        .addTranslatedAssociationMap(new LinkedHashMap<>() {
+          {
+            this.put(GraphicsMode.FAST.getTranslationKey(), GraphicsMode.FAST);
+            this.put(GraphicsMode.FANCY.getTranslationKey(), GraphicsMode.FANCY);
+            this.put(GraphicsMode.FABULOUS.getTranslationKey(), GraphicsMode.FABULOUS);
+          }
+        })
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
+    //TODO: setDescription with lambda
     this.registerOption("ao", BooleanOption.createBooleanBuilder(this,
             "ao")
-        .setName(Text.translatable("options.ao"))
+        .setDisplayName("options.ao")
         .setBinding((options, value) -> options.getAo().setValue(value),
             options -> options.getAo().getValue())
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
-    this.registerOption("prioritizeChunkUpdates", OptionImpl.createBuilder(ChunkBuilderMode.class, this,
+    //TODO: setDescription with lambda
+    this.registerOption("prioritizeChunkUpdates", EnumOption.createEnumBuilder(ChunkBuilderMode.class, this,
             "prioritizeChunkUpdates")
-        .setName(Text.translatable("options.prioritizeChunkUpdates"))
+        .setDisplayName("options.prioritizeChunkUpdates")
         .setBinding((options, value) -> options.getChunkBuilderMode().setValue(value),
             options -> options.getChunkBuilderMode().getValue())
-        .addInputToValueTransformers(chunkBuilderModeStringConsumer)
+        .addTranslatedAssociationMap(new LinkedHashMap<>() {
+          {
+            this.put(ChunkBuilderMode.NONE.getTranslationKey(), ChunkBuilderMode.NONE);
+            this.put(ChunkBuilderMode.PLAYER_AFFECTED.getTranslationKey(), ChunkBuilderMode.PLAYER_AFFECTED);
+            this.put(ChunkBuilderMode.NEARBY.getTranslationKey(), ChunkBuilderMode.NEARBY);
+          }
+        })
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
-    this.registerOption("biomeBlendRadius", OptionImpl.createBuilder(Integer.class, this,
+    this.registerOption("biomeBlendRadius", RangedIntOption.createRangedIntBuilder(this,
             "biomeBlendRadius")
-        .setName(Text.translatable("options.biomeBlendRadius"))
+        .setDisplayName("options.biomeBlendRadius")
         .setBinding((options, value) -> options.getBiomeBlendRadius().setValue(value),
             options -> options.getBiomeBlendRadius().getValue())
-        .addInputToValueTransformers(integerStringConsumer)
+        .setRange(0, 7)
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
-    this.registerOption("renderClouds", OptionImpl.createBuilder(CloudRenderMode.class, this,
+    this.registerOption("renderClouds", EnumOption.createEnumBuilder(CloudRenderMode.class, this,
             "renderClouds")
-        .setName(Text.translatable("options.renderClouds"))
+        .setDisplayName("options.renderClouds")
         .setBinding((options, value) -> options.getCloudRenderMode().setValue(value),
             options -> options.getCloudRenderMode().getValue())
-        .addInputToValueTransformers(cloudRenderModeStringConsumer)
+        .addTranslatedAssociationMap(new LinkedHashMap<>() {
+          {
+            this.put(CloudRenderMode.OFF.getTranslationKey(), CloudRenderMode.OFF);
+            this.put(CloudRenderMode.FAST.getTranslationKey(), CloudRenderMode.FAST);
+            this.put(CloudRenderMode.FANCY.getTranslationKey(), CloudRenderMode.FANCY);
+          }
+        })
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
     // TODO Reload language properly
     this.registerOption("lang", OptionImpl.createBuilder(String.class, this,
             "lang")
-        .setName(Text.translatable("options.language"))
+        .setDisplayName("options.language")
         .setBinding((options, value) -> options.language = value,
             options -> options.language)
         .build());
-    this.registerOption("soundDevice", OptionImpl.createBuilder(String.class, this,
+    List<String> soundDeviceList = Stream.concat(Stream.of(""), MinecraftClient.getInstance().getSoundManager().getSoundDevices().stream()).toList();
+    this.registerOption("soundDevice", EnumOption.createEnumBuilder(String.class, this,
             "soundDevice")
-        .setName(Text.translatable("options.audioDevice"))
+        .setDisplayName("options.audioDevice")
         .setBinding((options, value) -> options.getSoundDevice().setValue(value),
             options -> options.getSoundDevice().getValue())
+        .addTranslatedAssociationMap(new LinkedHashMap<>() {
+          {
+            for (String soundDevice : soundDeviceList) {
+              this.put(soundDevice, soundDevice);
+            }
+          }
+        })
         .build());
-    this.registerOption("chatVisibility", OptionImpl.createBuilder(ChatVisibility.class, this,
+    this.registerOption("chatVisibility", EnumOption.createEnumBuilder(ChatVisibility.class, this,
             "chatVisibility")
-        .setName(Text.translatable("options.chat.visibility"))
+        .setDisplayName("options.chat.visibility")
         .setBinding((options, value) -> options.getChatVisibility().setValue(value),
             options -> options.getChatVisibility().getValue())
-        .addInputToValueTransformers(chatVisibilityStringConsumer)
+        .addTranslatedAssociationMap(new LinkedHashMap<>() {
+          {
+            this.put(ChatVisibility.FULL.getTranslationKey(), ChatVisibility.FULL);
+            this.put(ChatVisibility.SYSTEM.getTranslationKey(), ChatVisibility.SYSTEM);
+            this.put(ChatVisibility.HIDDEN.getTranslationKey(), ChatVisibility.HIDDEN);
+          }
+        })
         .build());
-    this.registerOption("chatOpacity", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("chatOpacity", RangedDoubleOption.createRangedDoubleBuilder(this,
             "chatOpacity")
-        .setName(Text.translatable("options.chat.opacity"))
+        .setDisplayName("options.chat.opacity")
         .setBinding((options, value) -> options.getChatOpacity().setValue(value),
             options -> options.getChatOpacity().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("chatLineSpacing", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("chatLineSpacing", RangedDoubleOption.createRangedDoubleBuilder(this,
             "chatLineSpacing")
-        .setName(Text.translatable("options.chat.line_spacing"))
+        .setDisplayName("options.chat.line_spacing")
         .setBinding((options, value) -> options.getChatLineSpacing().setValue(value),
             options -> options.getChatLineSpacing().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("textBackgroundOpacity", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("textBackgroundOpacity", RangedDoubleOption.createRangedDoubleBuilder(this,
             "textBackgroundOpacity")
-        .setName(Text.translatable("options.accessibility.text_background_opacity"))
+        .setDisplayName("options.accessibility.text_background_opacity")
         .setBinding((options, value) -> options.getTextBackgroundOpacity().setValue(value),
             options -> options.getTextBackgroundOpacity().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
     this.registerOption("backgroundForChatOnly", BooleanOption.createBooleanBuilder(this,
             "backgroundForChatOnly")
-        .setName(Text.translatable("options.accessibility.text_background"))
+        .setDisplayName("options.accessibility.text_background")
         .setBinding((options, value) -> options.getBackgroundForChatOnly().setValue(value),
             options -> options.getBackgroundForChatOnly().getValue())
         .build());
     this.registerOption("advancedItemTooltips", BooleanOption.createBooleanBuilder(this,
             "advancedItemTooltips")
-        .setName(Text.of("Advanced item tooltips"))
+        .setDisplayName("access_options.minecraft.options.advanced_tooltips")
+        .setDescription("access_options.minecraft.options.advanced_tooltips.description")
         .setBinding((options, value) -> options.advancedItemTooltips = value,
             options -> options.advancedItemTooltips)
         .build());
     this.registerOption("pauseOnLostFocus", BooleanOption.createBooleanBuilder(this,
             "pauseOnLostFocus")
-        .setName(Text.of("Pause on lost focus"))
+        .setDisplayName("access_options.minecraft.options.pause_on_lost_focus")
+        .setDescription("access_options.minecraft.options.pause_on_lost_focus.description")
         .setBinding((options, value) -> options.pauseOnLostFocus = value,
             options -> options.pauseOnLostFocus)
         .build());
-    this.registerOption("chatHeightFocused", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("chatHeightFocused", RangedDoubleOption.createRangedDoubleBuilder(this,
             "chatHeightFocused")
-        .setName(Text.of("Chat height focused"))
+        .setDisplayName("options.chat.height.focused")
         .setBinding((options, value) -> options.getChatHeightFocused().setValue(value),
             options -> options.getChatHeightFocused().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("chatDelay", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("chatDelay", RangedDoubleOption.createRangedDoubleBuilder(this,
             "chatDelay")
-        .setName(Text.of("Chat delay"))
+        .setDisplayName("options.chat.delay_instant")
         .setBinding((options, value) -> options.getChatDelay().setValue(value),
             options -> options.getChatDelay().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 6.0)
         .build());
-    this.registerOption("chatHeightUnfocused", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("chatHeightUnfocused", RangedDoubleOption.createRangedDoubleBuilder(this,
             "chatHeightUnfocused")
-        .setName(Text.of("Chat height unfocused"))
+        .setDisplayName("options.chat.height.unfocused")
         .setBinding((options, value) -> options.getChatHeightUnfocused().setValue(value),
             options -> options.getChatHeightUnfocused().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("chatScale", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("chatScale", RangedDoubleOption.createRangedDoubleBuilder(this,
             "chatScale")
-        .setName(Text.of("Chat scale"))
+        .setDisplayName("options.chat.scale")
         .setBinding((options, value) -> options.getChatScale().setValue(value),
             options -> options.getChatScale().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("chatWidth", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("chatWidth", RangedDoubleOption.createRangedDoubleBuilder(this,
             "chatWidth")
-        .setName(Text.of("Chat width"))
+        .setDisplayName("options.chat.width")
         .setBinding((options, value) -> options.getChatWidth().setValue(value),
             options -> options.getChatWidth().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.0, 1.0)
         .build());
-    this.registerOption("notificationDisplayTime", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("notificationDisplayTime", RangedDoubleOption.createRangedDoubleBuilder(this,
             "notificationDisplayTime")
-        .setName(Text.of("Notification display time"))
+        .setDisplayName("options.notifications.display_time")
         .setBinding((options, value) -> options.getNotificationDisplayTime().setValue(value),
             options -> options.getNotificationDisplayTime().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(0.5, 10.0)
         .build());
-    this.registerOption("mipmapLevels", OptionImpl.createBuilder(Integer.class, this,
+    this.registerOption("mipmapLevels", RangedIntOption.createRangedIntBuilder(this,
             "mipmapLevels")
-        .setName(Text.of("Mipmap levels"))
+        .setDisplayName("options.mipmapLevels")
         .setBinding((options, value) -> options.getMipmapLevels().setValue(value),
             options -> options.getMipmapLevels().getValue())
-        .addInputToValueTransformers(integerStringConsumer)
+        .setRange(0, 4)
         .setReloaders(new RequiresRendererReload(optionsAccessHandler))
         .build());
-    this.registerOption("mainHand", OptionImpl.createBuilder(Arm.class, this,
+    this.registerOption("mainHand", EnumOption.createEnumBuilder(Arm.class, this,
             "mainHand")
-        .setName(Text.of("Main hand"))
+        .setDisplayName("options.mainHand")
         .setBinding((options, value) -> options.getMainArm().setValue(value),
             options -> options.getMainArm().getValue())
-        .addInputToValueTransformers(armStringConsumer)
+        .addTranslatedAssociationMap(new LinkedHashMap<>() {
+          {
+            this.put(Arm.LEFT.getTranslationKey(), Arm.LEFT);
+            this.put(Arm.RIGHT.getTranslationKey(), Arm.RIGHT);
+          }
+        })
         .build());
-    this.registerOption("attackIndicator", OptionImpl.createBuilder(AttackIndicator.class, this,
+    this.registerOption("attackIndicator", EnumOption.createEnumBuilder(AttackIndicator.class, this,
             "attackIndicator")
-        .setName(Text.of("Attack indicator"))
+        .setDisplayName("options.attackIndicator")
         .setBinding((options, value) -> options.getAttackIndicator().setValue(value),
             options -> options.getAttackIndicator().getValue())
-        .addInputToValueTransformers(attackIndicatorModeStringConsumer)
+        .addTranslatedAssociationMap(new LinkedHashMap<>() {
+          {
+            this.put(AttackIndicator.OFF.getTranslationKey(), AttackIndicator.OFF);
+            this.put(AttackIndicator.CROSSHAIR.getTranslationKey(), AttackIndicator.CROSSHAIR);
+            this.put(AttackIndicator.HOTBAR.getTranslationKey(), AttackIndicator.HOTBAR);
+          }
+        })
         .build());
-    this.registerOption("narrator", OptionImpl.createBuilder(NarratorMode.class, this,
+    this.registerOption("narrator", EnumOption.createEnumBuilder(NarratorMode.class, this,
             "narrator")
-        .setName(Text.of("Narrator"))
+        .setDisplayName("options.narrator")
         .setBinding((options, value) -> options.getNarrator().setValue(value),
             options -> options.getNarrator().getValue())
-        .addInputToValueTransformers(narratorModeStringConsumer)
+        .addTranslatedAssociationMap(new LinkedHashMap<>() {
+          {
+            this.put("options.narrator.off", NarratorMode.OFF);
+            this.put("options.narrator.all", NarratorMode.ALL);
+            this.put("options.narrator.chat", NarratorMode.CHAT);
+            this.put("options.narrator.system", NarratorMode.SYSTEM);
+          }
+        })
         .build());
-    this.registerOption("tutorialStep", OptionImpl.createBuilder(TutorialStep.class, this,
+    this.registerOption("tutorialStep", EnumOption.createEnumBuilder(TutorialStep.class, this,
             "tutorialStep")
-        .setName(Text.of("Tutorial step"))
+        .setDisplayName("access_options.minecraft.options.tutorial_step")
         .setBinding((options, value) -> options.tutorialStep = value,
             options -> options.tutorialStep)
-        .addInputToValueTransformers(tutorialStepStringConsumer)
+        .addAssociationMap(new LinkedHashMap<>() {
+          {
+            this.put("movement", TutorialStep.MOVEMENT);
+            this.put("find_tree", TutorialStep.FIND_TREE);
+            this.put("punch_tree", TutorialStep.PUNCH_TREE);
+            this.put("open_inventory", TutorialStep.OPEN_INVENTORY);
+            this.put("craft_planks", TutorialStep.CRAFT_PLANKS);
+            this.put("none", TutorialStep.NONE);
+          }
+        })
         .build());
-    this.registerOption("mouseWheelSensitivity", OptionImpl.createBuilder(Double.class, this,
+    this.registerOption("mouseWheelSensitivity", RangedDoubleOption.createRangedDoubleBuilder(this,
             "mouseWheelSensitivity")
-        .setName(Text.of("Mouse wheel sensitivity"))
+        .setDisplayName("options.mouseWheelSensitivity")
         .setBinding((options, value) -> options.getMouseWheelSensitivity().setValue(value),
             options -> options.getMouseWheelSensitivity().getValue())
-        .addInputToValueTransformers(doubleStringConsumer)
+        .setRange(1.0, 10.0)
         .build());
     this.registerOption("rawMouseInput", BooleanOption.createBooleanBuilder(this,
             "rawMouseInput")
-        .setName(Text.of("Raw mouse input"))
+        .setDisplayName("options.rawMouseInput")
         .setBinding((options, value) -> options.getRawMouseInput().setValue(value),
             options -> options.getRawMouseInput().getValue())
         .build());
     this.registerOption("skipMultiplayerWarning", BooleanOption.createBooleanBuilder(this,
             "skipMultiplayerWarning")
-        .setName(Text.of("Skip multiplayer warning"))
+        .setDisplayName("access_options.minecraft.options.skip_multiplayer_warning")
         .setBinding((options, value) -> options.skipMultiplayerWarning = value,
             options -> options.skipMultiplayerWarning)
         .build());
     this.registerOption("skipRealms32bitWarning", BooleanOption.createBooleanBuilder(this,
             "skipRealms32bitWarning")
-        .setName(Text.of("Skip realms 32-bit warning"))
+        .setDisplayName("access_options.minecraft.options.skip_realms_32_bit_warning")
         .setBinding((options, value) -> options.skipRealms32BitWarning = value,
             options -> options.skipRealms32BitWarning)
         .build());
     this.registerOption("hideMatchedNames", BooleanOption.createBooleanBuilder(this,
             "hideMatchedNames")
-        .setName(Text.of("Hide matched names"))
+        .setDisplayName("options.hideMatchedNames")
+        .setDescription("options.hideMatchedNames.tooltip")
         .setBinding((options, value) -> options.getHideMatchedNames().setValue(value),
             options -> options.getHideMatchedNames().getValue())
         .build());
     this.registerOption("hideBundleTutorial", BooleanOption.createBooleanBuilder(this,
             "hideBundleTutorial")
-        .setName(Text.of("Hide bundle tutorial"))
+        .setDisplayName("access_options.minecraft.options.hide_bundle_tutorial")
         .setBinding((options, value) -> options.hideBundleTutorial = value,
             options -> options.hideBundleTutorial)
         .build());
-    this.registerOption("syncChunkWrites", BooleanOption.createBooleanBuilder(this,
-            "syncChunkWrites")
-        .setName(Text.of("Sync chunk writes"))
-        .setBinding((options, value) -> options.syncChunkWrites = value,
-            options -> options.syncChunkWrites)
-        .build());
     this.registerOption("showAutosaveIndicator", BooleanOption.createBooleanBuilder(this,
             "showAutosaveIndicator")
-        .setName(Text.of("Show autosave indicator"))
+        .setDisplayName("access_options.minecraft.options.show_auto_save_indicator")
         .setBinding((options, value) -> options.getShowAutosaveIndicator().setValue(value),
             options -> options.getShowAutosaveIndicator().getValue())
         .build());
