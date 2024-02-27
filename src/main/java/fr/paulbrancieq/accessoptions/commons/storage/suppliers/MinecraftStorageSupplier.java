@@ -15,10 +15,8 @@ import net.minecraft.network.message.ChatVisibility;
 import net.minecraft.util.Arm;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
-import java.util.stream.Stream;
 
 public class MinecraftStorageSupplier extends StorageSupplierImpl {
   private final Map<String, OptionImpl.Builder<GameOptions, ?, ?>> optionsBuilders = new HashMap<>() {{

@@ -20,7 +20,7 @@ public class OptionsStorageImpl<T> implements OptionsStorage<T> {
     this.save = save;
     this.optionsAccessHandler = optionsAccessHandler;
     for (Map.Entry<String, OptionImpl.Builder<T, ?, ?>> entry : optionsBuilders.entrySet()) {
-      registerOption(entry.getKey(), entry.getValue().build());
+      registerOption(entry.getKey(), entry.getValue().setStorage(this).build());
     }
   }
 
