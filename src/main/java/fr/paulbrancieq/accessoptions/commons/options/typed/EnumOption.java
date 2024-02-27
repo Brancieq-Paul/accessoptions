@@ -5,8 +5,6 @@ import fr.paulbrancieq.accessoptions.commons.options.ModificationInputTransforme
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
 import fr.paulbrancieq.accessoptions.commons.options.TranslationValueMap;
 
-import net.minecraft.client.MinecraftClient;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -51,9 +49,7 @@ public class EnumOption<S, T> extends OptionImpl<S, T> {
 
     @SuppressWarnings({"unused","UnusedReturnValue"})
     public U addTranslatedAssociation(String translation_key, T value) {
-      if (!MinecraftClient.getInstance().options.language.equals("en_us")) {
-        addAssociation(translation_key, value, true);
-      }
+      addAssociation(translation_key, value, true);
       addAssociation(translation_key, value, false);
       return (U) this;
     }
