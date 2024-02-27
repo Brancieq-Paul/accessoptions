@@ -8,7 +8,7 @@ import fr.paulbrancieq.accessoptions.commons.reloader.AskConfirmation;
 import fr.paulbrancieq.accessoptions.commons.reloader.Reloader;
 import fr.paulbrancieq.accessoptions.commons.reloader.ReloaderComparator;
 import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
-import fr.paulbrancieq.accessoptions.commons.storage.StorageSupplier;
+import fr.paulbrancieq.accessoptions.commons.storage.suppliers.StorageSupplier;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

@@ -2,8 +2,8 @@ package fr.paulbrancieq.accessoptions.commons.options.typed;
 
 import fr.paulbrancieq.accessoptions.commons.exeptions.ValueVerificationException;
 import fr.paulbrancieq.accessoptions.commons.options.ModificationInputTransformer;
-import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 
+@SuppressWarnings("unused")
 public class RangedFloatOption<S> extends RangedOption<S, Float> {
   protected static ModificationInputTransformer<String, Float> inputToValueTransformer = Float::parseFloat;
 
@@ -11,13 +11,13 @@ public class RangedFloatOption<S> extends RangedOption<S, Float> {
     super(builder);
   }
 
-  public static <S> Builder<S> createRangedFloatBuilder(OptionsStorage<S> storage, String optionId) {
-    return new Builder<>(storage, optionId);
+  public static <S> Builder<S> createRangedFloatBuilder(String optionId, @SuppressWarnings("unused") Class<S> storageRawType) {
+    return new Builder<>(optionId);
   }
 
   public static class Builder<S> extends RangedOption.Builder<S, Float, RangedFloatOption.Builder<S>> {
-    protected Builder(OptionsStorage<S> storage, String optionId) {
-      super(storage, optionId);
+    protected Builder(String optionId) {
+      super(optionId);
       setValueVerifier((value) -> {
         if (!(value >= min && value <= max)) {
           throw new ValueVerificationException.ValueNotInRange(storage.getStorageId(), optionId, value, min, max);

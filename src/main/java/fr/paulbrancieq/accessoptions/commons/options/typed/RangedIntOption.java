@@ -2,7 +2,6 @@ package fr.paulbrancieq.accessoptions.commons.options.typed;
 
 import fr.paulbrancieq.accessoptions.commons.exeptions.ValueVerificationException;
 import fr.paulbrancieq.accessoptions.commons.options.ModificationInputTransformer;
-import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 
 public class RangedIntOption<S> extends RangedOption<S, Integer> {
   protected static ModificationInputTransformer<String, Integer> inputToValueTransformer = Integer::parseInt;
@@ -10,13 +9,13 @@ public class RangedIntOption<S> extends RangedOption<S, Integer> {
     super(builder);
   }
 
-  public static <S> Builder<S> createRangedIntBuilder(OptionsStorage<S> storage, String optionId) {
-    return new Builder<>(storage, optionId);
+  public static <S> Builder<S> createRangedIntBuilder(String optionId, @SuppressWarnings("unused") Class<S> storageRawType) {
+    return new Builder<>(optionId);
   }
 
   public static class Builder<S> extends RangedOption.Builder<S, Integer, RangedIntOption.Builder<S>> {
-    protected Builder(OptionsStorage<S> storage, String optionId) {
-      super(storage, optionId);
+    protected Builder(String optionId) {
+      super(optionId);
       setValueVerifier((value) -> {
         if (!(value >= min && value <= max)) {
           throw new ValueVerificationException.ValueNotInRange(storage.getStorageId(), optionId, value, min, max);

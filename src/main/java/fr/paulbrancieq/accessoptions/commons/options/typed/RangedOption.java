@@ -1,7 +1,6 @@
 package fr.paulbrancieq.accessoptions.commons.options.typed;
 
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
-import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 
 public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ranged<T> {
 
@@ -30,8 +29,8 @@ public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ran
     protected T min;
     protected T max;
 
-    protected Builder(OptionsStorage<S> storage, String optionId) {
-      super(storage, optionId);
+    protected Builder(String optionId) {
+      super(optionId);
     }
 
     @SuppressWarnings("unchecked")

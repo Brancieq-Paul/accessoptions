@@ -1,14 +1,15 @@
-package fr.paulbrancieq.accessoptions.commons.storage;
+package fr.paulbrancieq.accessoptions.commons.storage.suppliers;
 
 import fr.paulbrancieq.accessoptions.AccessOptions;
 import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
+import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class StorageSupplierImpl implements StorageSupplier {
-  private final Function<OptionsAccessHandler, OptionsStorage<?>> storageSupplier;
+  protected Function<OptionsAccessHandler, OptionsStorage<?>> storageSupplier;
   private final String modId;
   public StorageSupplierImpl(Function<OptionsAccessHandler, OptionsStorage<?>> storageSupplier, String modId) {
     this.storageSupplier = storageSupplier;

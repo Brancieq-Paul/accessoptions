@@ -1,7 +1,6 @@
 package fr.paulbrancieq.accessoptions.commons.reloader.integrated;
 
 import fr.paulbrancieq.accessoptions.AccessOptions;
-import fr.paulbrancieq.accessoptions.OptionsAccessHandler;
 import fr.paulbrancieq.accessoptions.commons.options.Option;
 import fr.paulbrancieq.accessoptions.commons.reloader.AskConfirmation;
 import fr.paulbrancieq.accessoptions.commons.reloader.GenericReloader;
@@ -9,19 +8,10 @@ import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.text.Text;
 
 public class ForceRequiresGameRestart extends GenericReloader implements AskConfirmation {
+  protected ForceRequiresGameRestart(Builder builder) {
+    super(builder);
+  }
 
-  /**
-   * Create an empty instance. Used for internal purposes.
-   * All reloaders should at least have this empty constructor.
-   */
-  @SuppressWarnings("unused")
-  public ForceRequiresGameRestart() {
-    super();
-  }
-  @SuppressWarnings("unused")
-  public ForceRequiresGameRestart(OptionsAccessHandler handler) {
-    super(() -> handler.setRestartNeeded(true), handler);
-  }
   @Override
   public BooleanConsumer getPromptAnswerConsumer(Option<?, ?> option) {
     return (prompt) -> {
@@ -32,6 +22,7 @@ public class ForceRequiresGameRestart extends GenericReloader implements AskConf
       }
     };
   }
+
   @Override
   public Text getName() {
     return Text.of("Requires immediate game restart");
@@ -41,5 +32,17 @@ public class ForceRequiresGameRestart extends GenericReloader implements AskConf
   public Text getConfirmationText() {
     return Text.of("The changes you made require an immediate game restart to be applied. Do you want to restart " +
         "the game now? If you refuse, the changes will be lost.");
+  }
+
+  public static class Builder extends GenericReloader.Builder<Builder> {
+    public Builder() {
+      super();
+      setRunnable((handler) -> handler.setRestartNeeded(true));
+    }
+
+    @Override
+    public ForceRequiresGameRestart build() {
+      return new ForceRequiresGameRestart(this);
+    }
   }
 }

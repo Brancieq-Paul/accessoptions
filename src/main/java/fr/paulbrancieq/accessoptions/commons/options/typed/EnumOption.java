@@ -3,7 +3,6 @@ package fr.paulbrancieq.accessoptions.commons.options.typed;
 import fr.paulbrancieq.accessoptions.commons.exeptions.ValueVerificationException;
 import fr.paulbrancieq.accessoptions.commons.options.ModificationInputTransformer;
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
-import fr.paulbrancieq.accessoptions.commons.storage.OptionsStorage;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.resource.language.TranslationStorage;
 
@@ -22,8 +21,8 @@ public class EnumOption<S, T> extends OptionImpl<S, T> {
     this.valueMap = builder.valueMap;
   }
 
-  public static <S, T> Builder<S, T, ?> createEnumBuilder(@SuppressWarnings("unused") Class<T> type, OptionsStorage<S> storage, String optionId) {
-    return new Builder<>(storage, optionId);
+  public static <S, T> Builder<S, T, ?> createEnumBuilder(@SuppressWarnings("unused") Class<T> type, @SuppressWarnings("unused") Class<S> storageRawType, String optionId) {
+    return new Builder<>(optionId);
   }
 
   @SuppressWarnings({"unchecked"})
@@ -32,8 +31,8 @@ public class EnumOption<S, T> extends OptionImpl<S, T> {
     TranslationStorage translationStorage = TranslationStorage.load(MinecraftClient.getInstance().getResourceManager(),
         new ArrayList<>() {{add("en_us");}}, false);
 
-    protected Builder(OptionsStorage<S> storage, String optionId) {
-      super(storage, optionId);
+    protected Builder(String optionId) {
+      super(optionId);
       setValueVerifier(value -> {
         if (!valueMap.containsValue(value)) {
           throw new ValueVerificationException.ValueNotInEnum(storage.getStorageId(), optionId, value,
