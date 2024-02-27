@@ -3,18 +3,15 @@ package fr.paulbrancieq.accessoptions.commons.options.typed;
 import fr.paulbrancieq.accessoptions.commons.exeptions.ValueVerificationException;
 import fr.paulbrancieq.accessoptions.commons.options.ModificationInputTransformer;
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.resource.language.TranslationStorage;
+import fr.paulbrancieq.accessoptions.commons.options.TranslationValueMap;
 
 import net.minecraft.client.MinecraftClient;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class EnumOption<S, T> extends OptionImpl<S, T> {
-  protected Map<String, T> valueMap;
+  protected TranslationValueMap<T> valueMap;
 
   public EnumOption(Builder<S, T, ?> builder) {
     super(builder);
@@ -27,9 +24,7 @@ public class EnumOption<S, T> extends OptionImpl<S, T> {
 
   @SuppressWarnings({"unchecked"})
   public static class Builder<S, T, U extends Builder<S, T, ?>> extends OptionImpl.Builder<S, T, Builder<S, T, ?>> {
-    protected Map<String, T> valueMap = new HashMap<>();
-    TranslationStorage translationStorage = TranslationStorage.load(MinecraftClient.getInstance().getResourceManager(),
-        new ArrayList<>() {{add("en_us");}}, false);
+    protected TranslationValueMap<T> valueMap = new TranslationValueMap<>();
 
     protected Builder(String optionId) {
       super(optionId);
@@ -49,27 +44,26 @@ public class EnumOption<S, T> extends OptionImpl<S, T> {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public U addAssociation(String key, T value) {
-      valueMap.put(key.toLowerCase(), value);
+    public U addAssociation(String key, T value, Boolean default_lang) {
+      valueMap.put(key, value, default_lang);
       return (U) this;
     }
 
     @SuppressWarnings({"unused","UnusedReturnValue"})
     public U addTranslatedAssociation(String translation_key, T value) {
       if (!MinecraftClient.getInstance().options.language.equals("en_us")) {
-        addAssociation(translationStorage.get(translation_key), value);
+        addAssociation(translation_key, value, true);
       }
-      addAssociation(I18n.translate(translation_key), value);
+      addAssociation(translation_key, value, false);
       return (U) this;
     }
 
-    @SuppressWarnings({"unused", "UnusedReturnValue"})
+    @SuppressWarnings("UnusedReturnValue")
     public U addAssociationMap(Map<String, T> valueMap) {
       this.valueMap.putAll(valueMap);
       return (U) this;
     }
 
-    @SuppressWarnings("unused")
     public U addTranslatedAssociationMap(LinkedHashMap<String, T> valueMap) {
       valueMap.forEach(this::addTranslatedAssociation);
       return (U) this;
