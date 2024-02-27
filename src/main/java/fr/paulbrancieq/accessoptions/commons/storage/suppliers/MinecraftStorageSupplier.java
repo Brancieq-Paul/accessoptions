@@ -279,18 +279,19 @@ public class MinecraftStorageSupplier extends StorageSupplierImpl {
         .setDisplayName("options.language")
         .setBinding((options, value) -> options.language = value,
             options -> options.language));
-    List<String> soundDeviceList = Stream.concat(Stream.of(""), MinecraftClient.getInstance().getSoundManager().getSoundDevices().stream()).toList();
-    put("soundDevice", EnumOption.createEnumBuilder(String.class, GameOptions.class, "soundDevice")
-        .setDisplayName("options.audioDevice")
-        .setBinding((options, value) -> options.getSoundDevice().setValue(value),
-            options -> options.getSoundDevice().getValue())
-        .addTranslatedAssociationMap(new LinkedHashMap<>() {
-          {
-            for (String soundDevice : soundDeviceList) {
-              put(soundDevice, soundDevice);
-            }
-          }
-        }));
+    // TODO: Need to add a way to give lambda as AssociationMap key
+//    List<String> soundDeviceList = Stream.concat(Stream.of(""), MinecraftClient.getInstance().getSoundManager().getSoundDevices().stream()).toList();
+//    put("soundDevice", EnumOption.createEnumBuilder(String.class, GameOptions.class, "soundDevice")
+//        .setDisplayName("options.audioDevice")
+//        .setBinding((options, value) -> options.getSoundDevice().setValue(value),
+//            options -> options.getSoundDevice().getValue())
+//        .addTranslatedAssociationMap(new LinkedHashMap<>() {
+//          {
+//            for (String soundDevice : soundDeviceList) {
+//              put(soundDevice, soundDevice);
+//            }
+//          }
+//        }));
     put("chatVisibility", EnumOption.createEnumBuilder(ChatVisibility.class, GameOptions.class, "chatVisibility")
         .setDisplayName("options.chat.visibility")
         .setBinding((options, value) -> options.getChatVisibility().setValue(value),
