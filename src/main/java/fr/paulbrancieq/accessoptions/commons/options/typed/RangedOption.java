@@ -2,10 +2,12 @@ package fr.paulbrancieq.accessoptions.commons.options.typed;
 
 import fr.paulbrancieq.accessoptions.commons.options.OptionImpl;
 
+import java.util.function.Supplier;
+
 public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ranged<T> {
 
-  protected final T min;
-  protected final T max;
+  protected final Supplier<T> min;
+  protected final Supplier<T> max;
 
   protected RangedOption(Builder<S, T, ?> builder) {
     super(builder);
@@ -16,18 +18,18 @@ public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ran
   @SuppressWarnings("unused")
   @Override
   public T getMin() {
-    return min;
+    return min.get();
   }
 
   @SuppressWarnings("unused")
   @Override
   public T getMax() {
-    return max;
+    return max.get();
   }
 
   public static class Builder<S, T, U extends Builder<S, T, ?>> extends OptionImpl.Builder<S, T, Builder<S, T, ?>> {
-    protected T min;
-    protected T max;
+    protected Supplier<T> min;
+    protected Supplier<T> max;
 
     protected Builder(String optionId) {
       super(optionId);
@@ -35,6 +37,13 @@ public abstract class RangedOption<S, T> extends OptionImpl<S, T> implements Ran
 
     @SuppressWarnings("unchecked")
     public U setRange(T min, T max) {
+      this.min = () -> min;
+      this.max = () -> max;
+      return (U) this;
+    }
+
+    @SuppressWarnings("unchecked")
+    public U setRange(Supplier<T> min, Supplier<T> max) {
       this.min = min;
       this.max = max;
       return (U) this;

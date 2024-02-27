@@ -203,7 +203,7 @@ public class MinecraftStorageSupplier extends StorageSupplierImpl {
               MinecraftClient.getInstance().onResolutionChanged();
             },
             options -> options.getGuiScale().getValue())
-        .setRange(0, MinecraftClient.getInstance().getWindow().calculateScaleFactor(0,
+        .setRange(() -> 0, () -> MinecraftClient.getInstance().getWindow().calculateScaleFactor(0,
             MinecraftClient.getInstance().forcesUnicodeFont())));
     put("particles", EnumOption.createEnumBuilder(ParticlesMode.class, GameOptions.class, "particles")
         .setDisplayName("options.particles")

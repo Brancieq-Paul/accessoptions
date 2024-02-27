@@ -17,8 +17,8 @@ public class RangedIntOption<S> extends RangedOption<S, Integer> {
     protected Builder(String optionId) {
       super(optionId);
       setValueVerifier((value) -> {
-        if (!(value >= min && value <= max)) {
-          throw new ValueVerificationException.ValueNotInRange(storage.getStorageId(), optionId, value, min, max);
+        if (!(value >= min.get() && value <= max.get())) {
+          throw new ValueVerificationException.ValueNotInRange(storage.getStorageId(), optionId, value, min.get(), max.get());
         }
       });
       addInputToValueTransformers(inputToValueTransformer);
